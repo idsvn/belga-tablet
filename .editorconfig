@@ -1,0 +1,18 @@
+# EditorConfig helps developers define and maintain consistent coding styles between different editors and IDEs
+# For more information about the EditorConfig project, please see http://editorconfig.org
+
+root = true
+
+[*]
+arrowParens = always
+bracketSpacing = true
+semi = true
+quoteType = single
+quoteProps = as-needed
+trailingComma = all
+htmlWhitespaceSensitivity = cssØ
+proseWrap = preserve
+tabWidth = 2
+useTabs = false
+printWidth = 80
+end_of_line = lf

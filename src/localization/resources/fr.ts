@@ -1,0 +1,73 @@
+const localizationStringFR = {
+  translation: {
+    BottomNavigation: {
+      favorites: 'Favoris',
+      explore: 'Explorer',
+      more: 'Plus',
+    },
+    PrimaryHeader: {
+      searchPlaceholderText: 'Rechercher des articles',
+    },
+    IntroduceScreen: {
+      signInText: 'Se connecter',
+      continueAsGuestText: "Continuer en tant qu'invité",
+    },
+    ExploreScreen: {
+      titleText: 'Vos publications préférées',
+      showMoreText: 'Voir tout',
+      realtimeFeedText: 'Flux en temps réel',
+      showMoreRealtimeFeedText: 'Lire plus',
+      realtimeFeedItem: {
+        wordsText: 'mots',
+      },
+      latestPressReleaseTitleText: 'Dernières newsletters',
+      showMoreTextLatestPressRelease: 'Lire plus',
+      latestPressReleaseItem: {
+        recurringText: 'RÉCURRENTE',
+      },
+    },
+    NewspaperScreen: {
+      pageText: 'Page',
+      sidebar: {
+        articlesPageText: "PAGE D'ARTICLES",
+      },
+    },
+    NewspaperDetailScreen: {
+      sentimentText: 'SENTIMENT',
+      mediaValueText: 'VALEUR MÉDIATIQUE',
+      audienceReachText: 'AUDIENCE',
+      positioningText: 'POSITIONNEMENT',
+      pageText: 'Page',
+      wordsText: 'mots',
+      noticedIssueText:
+        'Vous avez remarqué un problème avec cet article ? Faites-le nous savoir!',
+      reportIssueText: 'Signaler un problème',
+    },
+    FavoritesScreen: {
+      yourFavoritesText: 'Vos favoris',
+      searchPlaceholderNewsletters: 'Rechercher des newsletters',
+      allText: 'Tout',
+      itemSelectedText: 'articles sélectionnés',
+      clearSelectionText: 'Effacer la sélection',
+    },
+    MoreScreen: {
+      MyProfile: {
+        myProfileText: 'Mon profil',
+        accountSettingText: 'Paramètres du compte',
+        changePasswordText: 'Changer le mot de passe',
+        helpText: 'Aide',
+        logoutText: 'Se déconnecter',
+        accountSettingTab: {
+          generalText: 'Général',
+          descriptionText:
+            'Ici, vous pouvez contrôler vos paramètres généraux sur Belga.press.',
+          generalSettingsText: 'Paramètres généraux',
+          paginationSettingsText: 'Paramètres de pagination',
+          languageSettingsText: 'Paramètres de langue',
+        },
+      },
+    },
+  },
+};
+
+export default localizationStringFR;
