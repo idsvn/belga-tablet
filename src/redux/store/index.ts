@@ -5,6 +5,7 @@ import { persistReducer, persistStore } from 'redux-persist';
 import {
   authenticationReducer,
   deliverablesReducer,
+  exploreReducer,
   newsObjectReducer,
   systemReducer,
   tagReducer,
@@ -18,6 +19,7 @@ const appReducer = combineReducers({
   newsObjectStore: newsObjectReducer,
   systemStore: systemReducer,
   tagStore: tagReducer,
+  exploreStore: exploreReducer,
 });
 
 const persistConfig = {

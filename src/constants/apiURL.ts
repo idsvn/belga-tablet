@@ -33,3 +33,7 @@ export const API_TAG_URL = {
 export const API_SOURCE_URL = {
   SOURCE_URL: `${API_BASE_URL}/sources`,
 };
+
+export const API_TOPIC_URL = {
+  TOPIC_URL: `${API_BASE_URL}/topics`,
+};

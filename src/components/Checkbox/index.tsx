@@ -13,6 +13,7 @@ const CheckBox = (props: CheckBoxProps) => {
 
   return (
     <TouchableOpacity
+      disabled={!onPress}
       style={[
         styles.checkBoxView,
         checked && styles.checkBoxActive,

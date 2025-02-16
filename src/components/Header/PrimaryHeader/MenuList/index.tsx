@@ -1,12 +1,13 @@
 import { FlatList, View } from 'react-native';
 
-import BelgaNowIcon from 'src/assets/svg/belga-now-icon.svg';
-import NewslettersIcon from 'src/assets/svg/newsletters-icon.svg';
-import PublicationIcon from 'src/assets/svg/publication-icon.svg';
-import RealTimeFeedIcon from 'src/assets/svg/realtime-feed-icon.svg';
-import SearchMenuIcon from 'src/assets/svg/search-menu-icon.svg';
+import { useDispatch } from 'react-redux';
 
-import ExploreSvg from 'components/svg/ExploreSvg';
+import {
+  ExploreMenu,
+  setCurrentExploreMenu,
+} from 'src/redux/slices/exploreSlice';
+
+import { MenuIcon } from './components/MenuIcon';
 
 import MenuItem from './MenuItem';
 
@@ -16,45 +17,38 @@ import styles from './styles';
 
 const iconSize = '28';
 
-const menuList = [
-  {
-    label: 'Explore',
-    icon: <ExploreSvg width={iconSize} height={iconSize} />,
-  },
-  {
-    label: 'Belga now',
-    icon: <BelgaNowIcon width={iconSize} height={iconSize} />,
-  },
-  {
-    label: 'Publications',
-    icon: <PublicationIcon width={iconSize} height={iconSize} />,
-  },
-  {
-    label: 'Realtime feed',
-    icon: <RealTimeFeedIcon width={iconSize} height={iconSize} />,
-  },
-  {
-    label: 'Newsletters',
-    icon: <NewslettersIcon width={iconSize} height={iconSize} />,
-  },
-  {
-    label: 'Search',
-    icon: <SearchMenuIcon width={iconSize} height={iconSize} />,
-  },
+export const MENU_LIST = [
+  ExploreMenu.EXPLORE,
+  ExploreMenu.BELGA_NOW,
+  ExploreMenu.PUBLICATIONS,
+  ExploreMenu.REALTIME_FEED,
+  ExploreMenu.NEWSLETTERS,
+  ExploreMenu.SEARCH,
 ];
 
 const MenuList = (props: MenuListProps) => {
   const { onClose } = props;
 
+  const dispatch = useDispatch();
+
   return (
     <View style={styles.container}>
       <FlatList
-        data={menuList}
+        data={MENU_LIST}
         showsVerticalScrollIndicator={false}
         keyExtractor={(__item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <MenuItem label={item.label} Icon={item.icon} onPress={onClose} />
-        )}
+        renderItem={({ item }) => {
+          return (
+            <MenuItem
+              label={item}
+              Icon={<MenuIcon menu={item} iconSize={iconSize} />}
+              onPress={() => {
+                dispatch(setCurrentExploreMenu(item));
+                onClose?.();
+              }}
+            />
+          );
+        }}
       />
     </View>
   );

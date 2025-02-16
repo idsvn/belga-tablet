@@ -25,6 +25,12 @@ const localizationString = {
       latestPressReleaseItem: {
         recurringText: 'RECURRING',
       },
+      belgaNow: 'Belga Now',
+      belgaNowSubTitle: 'All of Belga’s updates, fresh of the wire',
+      belgaNowSearchPlaceHolder: 'Search for Belga now',
+      liveTitle: 'LIVE',
+      allItems: 'All items',
+      topic: 'Topic',
     },
     NewspaperScreen: {
       pageText: 'Page',

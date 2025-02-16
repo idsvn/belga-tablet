@@ -1,11 +1,24 @@
 import qs from 'qs';
+import { useQuery } from 'react-query';
 
-import { API_NEWS_OBJECTS_URL } from 'src/constants/apiURL';
+import { API_BASE_URL, API_NEWS_OBJECTS_URL } from 'src/constants/apiURL';
+import { QUERY_KEY } from 'src/constants/queryKey';
 
+import { BelgaNewsObjectModel } from 'src/models/belgaNewsObjectModel';
 import { DeliverableModel } from 'src/models/publicationModel';
 import { QueryParams } from 'src/models/systemModel';
 
 import axiosService from './axiosService';
+
+interface BelgaNewsObjectsParams {
+  userId: number;
+  count: number;
+  enddate: string;
+  offset: number;
+  search?: string;
+  subsourceids?: number;
+  topicids?: string;
+}
 
 const newsObjectService = {
   getNewsObject: async (params?: QueryParams) => {
@@ -40,6 +53,27 @@ const newsObjectService = {
         throw err;
       });
   },
+  getBelgaNewsObject: async ({
+    userId,
+    ...params
+  }: BelgaNewsObjectsParams): Promise<BelgaNewsObjectModel> => {
+    return axiosService()({
+      url: `${API_BASE_URL}/users/${userId}/belga/newsobjects`,
+      method: 'GET',
+      params: params,
+    })
+      .then((res) => res.data)
+      .catch((err) => {
+        throw err;
+      });
+  },
 };
+
+export function useGetBelgaNewsObject(params: BelgaNewsObjectsParams) {
+  return useQuery(
+    [QUERY_KEY.BELGA_NEWS_OBJECT, params],
+    async () => await newsObjectService.getBelgaNewsObject(params),
+  );
+}
 
 export default newsObjectService;

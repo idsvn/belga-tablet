@@ -17,6 +17,8 @@ const colors = {
   gray300: '#D8D9E3',
   gray400: '#F0F1FA',
 
+  red1: '#BF256B',
+
   //
   background: '#ffffff',
   backgroundBox: '#f8f8f8',
@@ -58,6 +60,7 @@ const colors = {
   black: '#000000',
   active: '#6ba3d410',
   backdrop: 'rgba(42, 100, 163, 0.6)',
+  transparent: 'transparent',
 
   beigeBrown: '#B89A60',
 

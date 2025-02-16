@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Animated, FlatList, TouchableOpacity, View } from 'react-native';
 
 import { useTranslation } from 'react-i18next';
@@ -24,16 +24,20 @@ const PageList = (props: PageListProps) => {
 
   const [listHeight] = useState(new Animated.Value(0));
 
-  //   useEffect(() => {
-  //     handleScrollToIndex(activeIndex);
-  //   }, [activeIndex]);
+  useEffect(() => {
+    handleScrollToIndex(activeIndex);
+  }, [activeIndex]);
 
-  //   const handleScrollToIndex = (index: number) => {
-  //     flatListRef?.current?.scrollToIndex({
-  //       animated: true,
-  //       index: index,
-  //     });
-  //   };
+  const handleScrollToIndex = (index: number) => {
+    try {
+      flatListRef?.current?.scrollToIndex({
+        animated: true,
+        index: index,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const toggleShowPageList = () => {
     setShowPageList(!showPageList);
