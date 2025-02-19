@@ -8,7 +8,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerContainer: {
-    flex: 1,
     flexDirection: 'row',
   },
   titleContainer: {
@@ -79,6 +78,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   tabBarContainer: {
+    alignSelf: 'flex-start',
     flexDirection: 'row',
     color: colors.primary,
     borderBottomWidth: 1,
@@ -96,7 +96,6 @@ const styles = StyleSheet.create({
   },
   tabBarBodyHeader: {
     marginTop: 20,
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -111,6 +110,7 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.semiBold,
     fontSize: 16,
     color: colors.primary,
+    textTransform: 'capitalize',
     flex: 1,
   },
   dropdownCheckbox: {

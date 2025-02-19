@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Linking, TouchableOpacity, View } from 'react-native';
 
+import { useKeycloak } from '@react-keycloak/native';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+
+import { PATH_SCREEN } from 'src/constants/pathName';
 
 import { UserModel } from 'src/models/userModel';
 
@@ -18,35 +21,62 @@ import PrimaryLayout from 'components/Layout/PrimaryLayout';
 
 import AccountSettingTab from './components/AccountSettingTab';
 
+import { replace, userSessionManager } from 'App';
+
 import { Menu } from './types';
 
 import styles from './styles';
 
-const handleOnPressMenu = (menu: Menu) => {
-  if (menu?.link) {
-    Linking.openURL(menu.link);
-  }
-};
-
 const MoreScreen = () => {
   const { t } = useTranslation();
 
+  const { keycloak } = useKeycloak();
+
+  const onLogOut = async () => {
+    try {
+      await keycloak?.logout();
+      userSessionManager.reset();
+      replace(PATH_SCREEN.INTRODUCE_SCREEN);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleOnPressMenu = useCallback((menu: Menu) => {
+    if (menu?.link) {
+      Linking.openURL(menu.link);
+    }
+
+    switch (menu.type) {
+      case 'logout':
+        onLogOut();
+        break;
+
+      default:
+        break;
+    }
+  }, []);
+
   const Menus: Menu[] = [
     {
+      type: 'accountSetting',
       label: t('MoreScreen.MyProfile.accountSettingText'),
       icon: <AccountIcon />,
     },
     {
+      type: 'changePassword',
       label: t('MoreScreen.MyProfile.changePasswordText'),
       icon: <InfoIcon />,
       link: 'https://sso.ssl.belga.be/auth/realms/belga/account/#/security/signingin',
     },
     {
+      type: 'help',
       label: t('MoreScreen.MyProfile.helpText'),
       icon: <HelpIcon />,
       link: 'https://knowledgebase.belga.be/nl/article-categories/belgapress-web/',
     },
     {
+      type: 'logout',
       label: t('MoreScreen.MyProfile.logoutText'),
       icon: <LogoutIcon />,
     },

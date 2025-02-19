@@ -1,10 +1,12 @@
+import { TagModel } from './tagModel';
+
 export interface BelgaNewsObjectModel {
-  data: Daum[];
+  data: BelgaNewsObject[];
   _links: Links;
   _meta: any;
 }
 
-export interface Daum {
+export interface BelgaNewsObject {
   uuid: string;
   title: string;
   sourceId: number;
@@ -12,7 +14,7 @@ export interface Daum {
   mediumType: string;
   attachments: Attachment[];
   source: string;
-  tags: Tag[];
+  tags: TagModel[];
 }
 
 export interface Attachment {
@@ -30,20 +32,6 @@ export interface Reference {
   mimeType: string;
   representation: string;
   href: string;
-}
-
-export interface Tag {
-  id: number;
-  name: string;
-  image: string;
-  createDateTime: any;
-  queryObject: QueryObject;
-  type: string;
-  subscribed: any;
-  isPublic: boolean;
-  parentId: any;
-  pointerId: any;
-  order: number;
 }
 
 export interface QueryObject {

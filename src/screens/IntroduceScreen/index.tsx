@@ -16,7 +16,7 @@ import Text from 'components/customs/Text';
 import ImageWithSkeleton from 'components/ImageWithSkeleton';
 import PrimaryLayout from 'components/Layout/PrimaryLayout';
 
-import { navigate } from 'App';
+import { navigate, replace } from 'App';
 
 import styles from './styles';
 
@@ -50,9 +50,8 @@ const IntroduceScreen = () => {
 
   const handleLogin = async () => {
     try {
-      await keycloak?.login();
-
-      navigate(PATH_SCREEN.MAIN);
+      await keycloak.login();
+      replace(PATH_SCREEN.MAIN);
     } catch (error) {
       console.log('🚀 ~ handleLogin ~ error:', error);
     }

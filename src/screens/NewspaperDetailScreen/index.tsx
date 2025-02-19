@@ -3,22 +3,19 @@ import { TouchableOpacity, View } from 'react-native';
 
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+
+import { useUpdateTags } from 'src/hooks/useUpdateTags';
 
 import { PATH_SCREEN } from 'src/constants/pathName';
 import { QUERY_KEY } from 'src/constants/queryKey';
 
 import newsObjectService from 'src/services/newsObjectService';
 
-import {
-  Attachment,
-  AttachmentType,
-  QueryParamType,
-} from 'src/models/systemModel';
+import { Attachment, AttachmentType } from 'src/models/systemModel';
 import { TagModel } from 'src/models/tagModel';
 
-import { updateTags } from 'src/redux/slices/tagsSlice';
-import { AppDispatch, RootState } from 'src/redux/store';
+import { RootState } from 'src/redux/store';
 
 import { DATE_FORMAT_DDMMYYYY, formatDate } from 'src/utils/dateUtils';
 
@@ -29,7 +26,6 @@ import RefreshControl from 'components/customs/RefreshControl';
 import RenderHTML from 'components/customs/RenderHTML';
 import ScrollView from 'components/customs/ScrollView';
 import Text from 'components/customs/Text';
-import { globalLoading } from 'components/GlobalLoading';
 import NewspaperDetailHeader from 'components/Header/NewspaperDetailHeader';
 import ImageWithSkeleton from 'components/ImageWithSkeleton';
 import PrimaryLayout from 'components/Layout/PrimaryLayout';
@@ -44,8 +40,6 @@ const NewspaperDetailScreen = () => {
   const { t } = useTranslation();
 
   const { id } = getParams();
-
-  const dispatch = useDispatch<AppDispatch>();
 
   const fontSizeDefault = useSelector<RootState, number>(
     (state) => state.systemStore.fontSize.fontSizeDefault,
@@ -65,11 +59,10 @@ const NewspaperDetailScreen = () => {
     { enabled: Boolean(id) },
   );
 
-  const isFavorites = useMemo(() => {
-    return newspaperDetail?.tags?.some(
-      (tag) => tag.type === QueryParamType.SAVED_NEWS,
-    );
-  }, [newspaperDetail]);
+  const { isFavorite, onUpdateFavorite } = useUpdateTags({
+    tags: tagsSavedNews || [],
+    id,
+  });
 
   const imagesPage = useMemo(() => {
     const attachments = newspaperDetail?.attachments as Attachment[];
@@ -83,22 +76,16 @@ const NewspaperDetailScreen = () => {
     return attachments?.filter((item) => item.type === AttachmentType.Image);
   }, [newspaperDetail]);
 
-  const onPressFavorites = async () => {
-    globalLoading.show();
+  const onPressFavorites = () => {
     if (!id) return;
-
-    const tagIds = tagsSavedNews?.map((tag) => tag.id as number) || [];
-
-    await dispatch(updateTags({ id, data: isFavorites ? [] : tagIds }));
-    refetch();
-    globalLoading.hide();
+    onUpdateFavorite();
   };
 
   return (
     <PrimaryLayout
       Header={
         <NewspaperDetailHeader
-          isFavorites={isFavorites}
+          isFavorites={isFavorite}
           onPressFavorites={onPressFavorites}
         />
       }

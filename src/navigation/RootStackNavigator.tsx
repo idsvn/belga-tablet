@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
+import { useKeycloak } from '@react-keycloak/native';
 import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
+import BootSplash from 'react-native-bootsplash';
 
 import { PATH_SCREEN } from 'src/constants/pathName';
 
@@ -13,6 +15,8 @@ import NewspaperDetailScreen from 'src/screens/NewspaperDetailScreen';
 import NewspaperScreen from 'src/screens/NewspaperScreen';
 import ReportIssueScreen from 'src/screens/ReportIssueScreen';
 import SignInScreen from 'src/screens/SignInScreen';
+
+import { replace, userSessionManager } from 'App';
 
 import BottomNavigator from './BottomNavigator';
 
@@ -29,6 +33,39 @@ const optionsRoot = {
 };
 
 const RootStackNavigator = () => {
+  const { keycloak } = useKeycloak();
+
+  const clearToken = () => {
+    userSessionManager.reset();
+    keycloak?.clearToken();
+  };
+
+  const restoreToken = async () => {
+    const storedToken = userSessionManager.getAccessToken();
+
+    const storedRefreshToken = userSessionManager.getRefreshToken();
+
+    if (storedToken && storedRefreshToken && keycloak) {
+      keycloak.token = storedToken;
+      keycloak.refreshToken = storedRefreshToken;
+
+      try {
+        await keycloak.updateToken(30);
+        replace(PATH_SCREEN.MAIN);
+      } catch (error) {
+        clearToken();
+      }
+    } else {
+      clearToken();
+    }
+  };
+
+  useEffect(() => {
+    restoreToken().finally(() => {
+      BootSplash.hide({ fade: true });
+    });
+  }, []);
+
   const routeName = PATH_SCREEN.INTRODUCE_SCREEN;
 
   return (

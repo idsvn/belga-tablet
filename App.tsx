@@ -114,8 +114,14 @@ function App(): React.JSX.Element {
                 <SafeAreaProvider>
                   <ReactNativeKeycloakProvider
                     authClient={keycloak}
+                    onTokens={(tokens) => {
+                      tokens.token &&
+                        userSessionManager.setAccessToken(tokens.token);
+                      tokens.refreshToken &&
+                        userSessionManager.setRefreshToken(tokens.refreshToken);
+                    }}
                     initOptions={{
-                      redirectUri: 'belgatablet://home',
+                      redirectUri: configEnv.REDIRECT_URL,
                       // if you need to customize "react-native-inappbrowser-reborn" View you can use the following attribute
                       inAppBrowserOptions: {
                         // For iOS check: https://github.com/proyecto26/react-native-inappbrowser#ios-options

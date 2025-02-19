@@ -25,7 +25,12 @@ const appReducer = combineReducers({
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['userStore', 'deliverablesStore', 'newsObjectStore'],
+  whitelist: [
+    'userStore',
+    'deliverablesStore',
+    'newsObjectStore',
+    'authenticationStore',
+  ],
 };
 
 const rootReducer: Reducer = (state: RootState | undefined, action: any) => {

@@ -54,6 +54,7 @@ const SignInScreen = () => {
   const handleLogout = async () => {
     try {
       await keycloak?.logout();
+      userSessionManager.reset();
 
       console.log('logout success');
     } catch (error) {

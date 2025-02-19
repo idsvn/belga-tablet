@@ -30,6 +30,8 @@ const localizationStringNL = {
       belgaNowSearchPlaceHolder: 'Search for Belga now',
       liveTitle: 'LIVE',
       allItems: 'All items',
+      topic: 'Topic',
+      languages: 'Languages',
     },
     NewspaperScreen: {
       pageText: 'Pagina',

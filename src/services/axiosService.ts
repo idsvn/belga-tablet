@@ -2,9 +2,10 @@ import axios, { AxiosInstance } from 'axios';
 
 import configEnv from 'src/configs';
 
+import { userSessionManager } from 'App';
+
 const axiosService = (): AxiosInstance => {
-  // const accessToken = userSessionManager.getAccessToken();
-  const accessToken = configEnv.TOKEN_TEST;
+  const accessToken = userSessionManager.getAccessToken();
 
   const headers: any = {
     'Content-Type': 'application/json',
@@ -31,20 +32,20 @@ const axiosService = (): AxiosInstance => {
       return response;
     },
     (errors) => {
-      console.log(
-        'Error:',
-        JSON.stringify(
-          {
-            url: errors?.response?.config.url,
-            status: errors?.response?.status,
-            method: errors?.response?.config.method,
-            data: errors?.response?.data,
-            headers: errors?.response?.headers,
-          },
-          null,
-          2,
-        ),
-      );
+      // console.log(
+      //   'Error:',
+      //   JSON.stringify(
+      //     {
+      //       url: errors?.response?.config.url,
+      //       status: errors?.response?.status,
+      //       method: errors?.response?.config.method,
+      //       data: errors?.response?.data,
+      //       headers: errors?.response?.headers,
+      //     },
+      //     null,
+      //     2,
+      //   ),
+      // );
 
       throw errors;
     },

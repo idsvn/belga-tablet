@@ -37,3 +37,7 @@ export const API_SOURCE_URL = {
 export const API_TOPIC_URL = {
   TOPIC_URL: `${API_BASE_URL}/topics`,
 };
+
+export const API_BELGA_URL = {
+  BELGA_URL: `${API_BASE_URL}/sources/belga`,
+};

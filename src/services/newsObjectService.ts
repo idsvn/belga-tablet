@@ -16,8 +16,10 @@ interface BelgaNewsObjectsParams {
   enddate: string;
   offset: number;
   search?: string;
-  subsourceids?: number;
+  subsourceids?: string;
   topicids?: string;
+  languages?: string;
+  sourceids?: string;
 }
 
 const newsObjectService = {
@@ -69,10 +71,36 @@ const newsObjectService = {
   },
 };
 
-export function useGetBelgaNewsObject(params: BelgaNewsObjectsParams) {
+export function useGetBelgaNewsObject({
+  enabled = true,
+  ...params
+}: BelgaNewsObjectsParams & { enabled?: boolean }) {
+  const {
+    count,
+    offset,
+    topicids,
+    search,
+    languages,
+    sourceids,
+    subsourceids,
+  } = params;
+
   return useQuery(
-    [QUERY_KEY.BELGA_NEWS_OBJECT, params],
+    [
+      QUERY_KEY.BELGA_NEWS_OBJECT,
+      count,
+      offset,
+      topicids,
+      search,
+      languages,
+      sourceids,
+      subsourceids,
+    ],
     async () => await newsObjectService.getBelgaNewsObject(params),
+    {
+      refetchInterval: 30000,
+      enabled,
+    },
   );
 }
 

@@ -31,6 +31,8 @@ const localizationString = {
       liveTitle: 'LIVE',
       allItems: 'All items',
       topic: 'Topic',
+      languages: 'Languages',
+      contentTypes: 'Content types',
     },
     NewspaperScreen: {
       pageText: 'Page',
