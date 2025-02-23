@@ -9,6 +9,7 @@ import SecondLayout from 'components/Layout/SecondLayout';
 
 import BelgaNow from './BelgaNow';
 import { Explore } from './Explore';
+import { RealTimeFeedPage } from './RealtimeFeed/RealTimeFeedPage';
 
 import styles from './styles';
 
@@ -30,6 +31,8 @@ const ExplorePage = memo(() => {
       return <Explore />;
     case ExploreMenu.BELGA_NOW:
       return <BelgaNow />;
+    case ExploreMenu.REALTIME_FEED:
+      return <RealTimeFeedPage />;
 
     default:
       return <Explore />;

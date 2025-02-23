@@ -1,15 +1,12 @@
-import { useMemo } from 'react';
+import { memo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import { useTranslation } from 'react-i18next';
 import FastImage from 'react-native-fast-image';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { QueryParamType } from 'src/models/systemModel';
-import { TagModel } from 'src/models/tagModel';
+import { useUpdateTags } from 'src/hooks/useUpdateTags';
 
-import { updateTags } from 'src/redux/slices/tagsSlice';
-import { AppDispatch, RootState } from 'src/redux/store';
+import { PATH_SCREEN } from 'src/constants/pathName';
 
 import { timeAgo } from 'src/utils/dateUtils';
 
@@ -17,8 +14,9 @@ import NetworkIcon from 'src/assets/svg/network-icon.svg';
 import ShareIcon from 'src/assets/svg/share-icon.svg';
 
 import Text from 'components/customs/Text';
-import { globalLoading } from 'components/GlobalLoading';
 import FavoritesActiveSvg from 'components/svg/FavoritesActiveSvg';
+
+import { navigate } from 'App';
 
 import theme from 'src/themes';
 
@@ -29,14 +27,8 @@ import styles from './styles';
 const RealtimeFeedItem = (props: RealtimeFeedItemProps) => {
   const { t } = useTranslation();
 
-  const dispatch = useDispatch<AppDispatch>();
-
-  const tagsSavedNews = useSelector<RootState, TagModel[]>(
-    (state) => state.tagStore.tags,
-  );
-
   const {
-    uuid,
+    uuid = '',
     sourceLogo,
     title = '',
     wordCount = 0,
@@ -44,26 +36,23 @@ const RealtimeFeedItem = (props: RealtimeFeedItemProps) => {
     source = '',
     subSource = '',
     publishDate = '',
-    tags,
-    onPress,
+    tags = [],
   } = props;
 
-  const isFavorites = useMemo(() => {
-    return tags?.some((tag) => tag.type === QueryParamType.SAVED_NEWS);
-  }, [tags]);
-
-  const handleAddToFavorites = async () => {
-    globalLoading.show();
-    if (!uuid) return;
-
-    const tagIds = tagsSavedNews?.map((tag) => tag.id as number) || [];
-
-    await dispatch(updateTags({ id: uuid, data: isFavorites ? [] : tagIds }));
-    globalLoading.hide();
-  };
+  const { isFavorite, onUpdateFavorite } = useUpdateTags({
+    tags,
+    id: uuid,
+  });
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => {
+        navigate(PATH_SCREEN.NEWSPAPER_DETAIL_SCREEN, {
+          id: uuid,
+        });
+      }}
+    >
       <View style={styles.logoView}>
         <FastImage
           source={{ uri: sourceLogo }}
@@ -79,9 +68,9 @@ const RealtimeFeedItem = (props: RealtimeFeedItemProps) => {
               <Text style={styles.subTitleText}>{subSource}</Text>
             </View>
             <View style={styles.buttonGroup}>
-              <TouchableOpacity onPress={handleAddToFavorites}>
+              <TouchableOpacity onPress={onUpdateFavorite}>
                 <FavoritesActiveSvg
-                  active={isFavorites}
+                  active={isFavorite}
                   activeColor={theme.colors.gray}
                   width={'20'}
                   height={'20'}
@@ -108,4 +97,9 @@ const RealtimeFeedItem = (props: RealtimeFeedItemProps) => {
   );
 };
 
-export default RealtimeFeedItem;
+export default memo(RealtimeFeedItem, (prev, curr) => {
+  return (
+    prev.uuid === curr.uuid &&
+    JSON.stringify(prev.tags) === JSON.stringify(curr.tags)
+  );
+});

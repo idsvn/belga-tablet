@@ -104,4 +104,20 @@ export function useGetBelgaNewsObject({
   );
 }
 
+export function useGetRealtimeFeed({
+  enabled = true,
+  ...params
+}: QueryParams & { enabled?: boolean }) {
+  const { count, offset, start, end, subscription } = params;
+
+  return useQuery(
+    [QUERY_KEY.REALTIME_FEED, count, offset, start, end, subscription],
+    () => newsObjectService.getNewsObject(params),
+    {
+      refetchInterval: 30000,
+      enabled,
+    },
+  );
+}
+
 export default newsObjectService;

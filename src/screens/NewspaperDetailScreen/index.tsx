@@ -13,7 +13,6 @@ import { QUERY_KEY } from 'src/constants/queryKey';
 import newsObjectService from 'src/services/newsObjectService';
 
 import { Attachment, AttachmentType } from 'src/models/systemModel';
-import { TagModel } from 'src/models/tagModel';
 
 import { RootState } from 'src/redux/store';
 
@@ -45,10 +44,6 @@ const NewspaperDetailScreen = () => {
     (state) => state.systemStore.fontSize.fontSizeDefault,
   );
 
-  const tagsSavedNews = useSelector<RootState, TagModel[]>(
-    (state) => state.tagStore.tags,
-  );
-
   const {
     data: newspaperDetail,
     isLoading,
@@ -60,7 +55,7 @@ const NewspaperDetailScreen = () => {
   );
 
   const { isFavorite, onUpdateFavorite } = useUpdateTags({
-    tags: tagsSavedNews || [],
+    tags: newspaperDetail?.tags || [],
     id,
   });
 
