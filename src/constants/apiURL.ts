@@ -11,6 +11,7 @@ export const API_KIOSK_URL = {
   GET_PRESS_RELEASES_URL: `/kiosk/newsrooms/pressreleases`,
   GET_FAVORITES_URL: `/kiosk/deliverables/favourites`,
   GET_PUBLICATION_URL: `/kiosk/publications`,
+  GET_NEWS_LETTERS_URL: `/kiosk/newsletters`,
 };
 
 export const API_PUBLICATION_URL = {

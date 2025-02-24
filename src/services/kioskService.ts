@@ -1,4 +1,10 @@
+import { useQuery } from 'react-query';
+
 import { API_BASE_URL, API_KIOSK_URL } from 'src/constants/apiURL';
+import { QUERY_KEY } from 'src/constants/queryKey';
+
+import { NewsLettersResponse } from 'src/models/newslettersModel';
+import { QueryParams } from 'src/models/systemModel';
 
 import axiosService from './axiosService';
 
@@ -40,6 +46,37 @@ const kioskService = {
         throw err;
       });
   },
+  getNewLetters: async (
+    userId: number,
+    params: QueryParams,
+  ): Promise<NewsLettersResponse> => {
+    return axiosService()({
+      url: `${API_BASE_URL}/users/${userId}${API_KIOSK_URL.GET_NEWS_LETTERS_URL}`,
+      method: 'GET',
+      params,
+    })
+      .then((res) => res.data)
+      .catch((err) => {
+        throw err;
+      });
+  },
 };
+
+export function useGetNewLetters({
+  enabled = true,
+  userId,
+  ...params
+}: QueryParams & { userId: number; enabled?: boolean }) {
+  const { count, offset, start, end, order, type } = params;
+
+  return useQuery(
+    [QUERY_KEY.NEWSLETTER, count, offset, start, end, order, type, userId],
+    () => kioskService.getNewLetters(userId, params),
+    {
+      refetchInterval: 30000,
+      enabled,
+    },
+  );
+}
 
 export default kioskService;

@@ -184,6 +184,8 @@ export interface QueryParams {
   subscription?: boolean;
   start?: string | null;
   end?: string | null;
+  type?: string;
+  order?: string;
 
   [key: string]: any;
 }

@@ -1,5 +1,16 @@
 const localizationString = {
   translation: {
+    Calendar: {
+      fromText: 'From:',
+      toText: 'To:',
+      selectStartDate: 'Select start date',
+      selectEndDate: 'Select end date',
+      todayText: 'Today',
+      tomorrowText: 'Tomorrow',
+      next7DaysText: 'Next 7 days',
+      thisMonthText: 'This month',
+      thisYearText: 'This year',
+    },
     BottomNavigation: {
       favorites: 'Favorites',
       explore: 'Explore',
@@ -33,6 +44,7 @@ const localizationString = {
       topic: 'Topic',
       languages: 'Languages',
       contentTypes: 'Content types',
+      newsLettersSearchPlaceHolder: 'Search for newsletters',
     },
     NewspaperScreen: {
       pageText: 'Page',
