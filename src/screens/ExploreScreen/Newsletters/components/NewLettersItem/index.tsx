@@ -2,7 +2,7 @@ import { TouchableOpacity, View } from 'react-native';
 
 import { useTranslation } from 'react-i18next';
 
-import { Language } from 'src/models/systemModel';
+import { Letter } from 'src/models/newslettersModel';
 
 import { DATE_FORMAT_DDMMYYYYHHMM, formatDate } from 'src/utils/dateUtils';
 
@@ -10,23 +10,26 @@ import ClockIcon from 'src/assets/svg/clock-icon.svg';
 
 import Text from 'components/customs/Text';
 
-import { LatestPressReleaseItemProps } from './types';
-
 import styles from './styles';
 
-const LatestPressReleaseItem = (props: LatestPressReleaseItemProps) => {
-  const { pressRelease } = props;
+const LetterItem = (props: { data: Letter }) => {
+  const { data } = props;
 
   const { t } = useTranslation();
 
-  const { content, publishDate } = pressRelease ?? {};
+  const { name, publishDate } = data ?? {};
 
   return (
     <TouchableOpacity style={styles.container}>
       <View style={styles.titleView}>
-        <Text style={styles.titleText} numberOfLines={1}>
-          {content?.[Language.EN]?.title || ''}
-        </Text>
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.titleText} numberOfLines={1}>
+            {name || ''}
+          </Text>
+          <Text style={styles.byBelgaText} numberOfLines={1}>
+            {'By Belga'}
+          </Text>
+        </View>
         <View style={styles.recurringView}>
           <Text style={styles.recurringText}>
             {t('ExploreScreen.latestPressReleaseItem.recurringText')}
@@ -47,4 +50,4 @@ const LatestPressReleaseItem = (props: LatestPressReleaseItemProps) => {
   );
 };
 
-export default LatestPressReleaseItem;
+export default LetterItem;

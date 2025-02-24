@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import { useTranslation } from 'react-i18next';
 import { Calendar } from 'react-native-calendars';
@@ -7,203 +7,76 @@ import { Calendar } from 'react-native-calendars';
 import ArrowRightIconSvg from 'components/svg/ArrowRightIconSvg';
 
 import colors from 'src/themes/colors';
-import fontFamily from 'src/themes/fontFamily';
 
+import QuickSelectButton, { OnPressQuickSelectType } from './QuickSelectButton';
+
+import { DateObject, QuickSelectOptions } from './type';
+
+import { styles } from './styles';
+
+export interface OnDateChangeParams {
+  startDate: string;
+  endDate: string;
+  label?: string;
+}
 interface DateRangePickerProps {
   startDate?: string; // Optional string in 'YYYY-MM-DD' format
   endDate?: string; // Optional string in 'YYYY-MM-DD' format
-  onDatesChange?: ({
-    startDate,
-    endDate,
-    label,
-  }: {
-    startDate: string;
-    endDate: string;
-    label: string;
-  }) => void; // Optional callback
+  selectedQuickTap?: QuickSelectOptions; // Optional selected quick tap
+  setSelectedQuickTap: (quickTap?: QuickSelectOptions) => void; // Optional callback to set selected quick tap
+  setStartDate: (date: string) => void; // Optional callback to set start date
+  setEndDate: (date: string) => void; // Optional callback to set end date
+  onDatesChange?: ({ startDate, endDate, label }: OnDateChangeParams) => void; // Optional callback
   onClose?: () => void; // Optional callback when the user dismisses the picker
 }
 
-enum QuickSelectOptions {
-  Today = 'Today',
-  Tomorrow = 'Tomorrow',
-  Next7Days = 'Next 7 days',
-  ThisMonth = 'This month',
-  ThisYear = 'This year',
-}
-
-const QuickSelectButton: React.FC<{
-  title: string;
-  isSelected: boolean;
-  onPress: () => void;
-}> = ({ title, isSelected, onPress }) => {
-  return (
-    <TouchableOpacity
-      style={[
-        styles.quickButton,
-        isSelected && { backgroundColor: colors.darkBlue300 },
-      ]}
-      onPress={onPress}
-    >
-      <Text style={styles.textButton}>{title}</Text>
-    </TouchableOpacity>
-  );
-};
-
 const DateRangePicker: React.FC<DateRangePickerProps> = ({
-  startDate: propStartDate,
-  endDate: propEndDate,
+  startDate,
+  endDate,
+  setStartDate,
+  setEndDate,
   onDatesChange,
   onClose,
+  selectedQuickTap,
+  setSelectedQuickTap,
 }) => {
   const { t } = useTranslation();
 
-  const [startDate, setStartDate] = useState<string>(propStartDate || '');
+  // Use useMemo to calculate markedDates based on startDate and endDate
+  const markedDates = useMemo(() => {
+    const newMarkedDates: { [key: string]: any } = {};
 
-  const [endDate, setEndDate] = useState<string>(propEndDate || '');
-
-  const [markedDates, setMarkedDates] = useState({});
-
-  const [selectedQuickTap, setSelectedQuickTap] =
-    useState<QuickSelectOptions>();
-
-  useEffect(() => {
-    // Update local state when props change
-    setStartDate(propStartDate || '');
-    setEndDate(propEndDate || '');
-
-    if (propStartDate && propEndDate) {
-      // Mark the date range from props
-      const newMarkedDates = {
-        [propStartDate]: {
-          startingDay: true,
-          color: colors.primary, // Blue for selected start date
-          textColor: 'white',
-          selected: true,
-          selectedColor: colors.primary, // Ensure circular blue background
-          selectedTextColor: 'white',
-          borderRadius: 16, // Make it circular (adjust radius as needed)
-        },
-        [propEndDate]: {
-          endingDay: true,
-          color: colors.primary, // Blue for selected end date
-          textColor: 'white',
-          selected: true,
-          selectedColor: colors.primary,
-          selectedTextColor: 'white',
-          borderRadius: 16, // Make it circular (adjust radius as needed)
-        },
+    if (startDate && endDate) {
+      // Mark the start and end dates
+      newMarkedDates[startDate] = {
+        startingDay: true,
+        color: colors.primary,
+        textColor: 'white',
+        selected: true,
+        selectedColor: colors.primary,
+        selectedTextColor: 'white',
+        borderRadius: 16,
       };
-
-      // Mark all dates between start and end with light gray
-      const currentDate = new Date(propStartDate);
-
-      const end = new Date(propEndDate);
-
-      while (currentDate <= end) {
-        const dateString = currentDate.toISOString().split('T')[0];
-
-        if (dateString !== propStartDate && dateString !== propEndDate) {
-          newMarkedDates[dateString] = {
-            color: colors.lightGray, // Light gray for the range
-            textColor: 'black',
-            disabled: true,
-          };
-        }
-
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
-
-      setMarkedDates(newMarkedDates);
-    } else if (propStartDate) {
-      setMarkedDates({
-        [propStartDate]: {
-          startingDay: true,
-          color: colors.primary, // Blue for selected start date
-          textColor: 'white',
-          selected: true,
-          selectedColor: colors.primary,
-          selectedTextColor: 'white',
-          borderRadius: 16, // Make it circular
-        },
-      });
-    } else {
-      setMarkedDates({});
-    }
-  }, [propStartDate, propEndDate]);
-
-  const onDayPress = (day: any) => {
-    setSelectedQuickTap(undefined);
-    if (!startDate || (startDate && endDate)) {
-      // Set new start date
-      const newStartDate = day.dateString;
-
-      setStartDate(newStartDate);
-      setEndDate('');
-      setMarkedDates({
-        [newStartDate]: {
-          startingDay: true,
-          color: colors.primary,
-          textColor: 'white',
-          selected: true,
-          selectedColor: colors.primary,
-          selectedTextColor: 'white',
-          borderRadius: 16, // Circular styling
-        },
-      });
-      if (onDatesChange) {
-        onDatesChange(newStartDate, '');
-      }
-    } else if (startDate && !endDate && day.dateString >= startDate) {
-      // Set end date
-      const newEndDate = day.dateString;
-
-      setEndDate(newEndDate);
-      setMarkedDates({
-        ...markedDates,
-        [newEndDate]: {
-          endingDay: true,
-          color: colors.primary, // Blue for selected end date
-          textColor: 'white',
-          selected: true,
-          selectedColor: colors.primary,
-          selectedTextColor: 'white',
-          borderRadius: 16, // Circular styling
-        },
-        [startDate]: {
-          startingDay: true,
-          color: colors.primary, // Blue for start date
-          textColor: 'white',
-          selected: true,
-          selectedColor: colors.primary,
-          selectedTextColor: 'white',
-          borderRadius: 16, // Circular styling
-        },
-      });
+      newMarkedDates[endDate] = {
+        endingDay: true,
+        color: colors.primary,
+        textColor: 'white',
+        selected: true,
+        selectedColor: colors.primary,
+        selectedTextColor: 'white',
+        borderRadius: 16,
+      };
 
       // Mark all dates between start and end with light gray
       const currentDate = new Date(startDate);
 
-      const end = new Date(newEndDate);
-
-      const updatedMarkedDates = {
-        ...markedDates,
-        [newEndDate]: {
-          endingDay: true,
-          color: colors.primary,
-          textColor: 'white',
-          selected: true,
-          selectedColor: colors.primary,
-          selectedTextColor: 'white',
-          borderRadius: 16,
-        },
-      };
+      const end = new Date(endDate);
 
       while (currentDate <= end) {
         const dateString = currentDate.toISOString().split('T')[0];
 
-        if (dateString !== startDate && dateString !== newEndDate) {
-          updatedMarkedDates[dateString] = {
+        if (dateString !== startDate && dateString !== endDate) {
+          newMarkedDates[dateString] = {
             color: colors.lightGray,
             textColor: 'black',
             disabled: true,
@@ -212,41 +85,69 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
 
         currentDate.setDate(currentDate.getDate() + 1);
       }
+    } else if (startDate) {
+      // Only mark the start date
+      newMarkedDates[startDate] = {
+        startingDay: true,
+        color: colors.primary,
+        textColor: 'white',
+        selected: true,
+        selectedColor: colors.primary,
+        selectedTextColor: 'white',
+        borderRadius: 16,
+      };
+    }
 
-      setMarkedDates(updatedMarkedDates);
-      if (onDatesChange) {
-        onDatesChange(startDate, newEndDate);
-      }
+    return newMarkedDates;
+  }, [startDate, endDate]);
+
+  const onDayPress = (day: DateObject) => {
+    if (!startDate || (startDate && endDate)) {
+      // Set new start date
+      const newStartDate = day.dateString;
+
+      setStartDate(newStartDate);
+      setEndDate('');
+    } else if (startDate && !endDate && day.dateString >= startDate) {
+      // Set end date
+      const newEndDate = day.dateString;
+
+      setEndDate(newEndDate);
     } else {
       // Reset if selection is invalid
       const newStartDate = day.dateString;
 
       setStartDate(newStartDate);
       setEndDate('');
-      setMarkedDates({
-        [newStartDate]: {
-          startingDay: true,
-          color: colors.primary,
-          textColor: 'white',
-          selected: true,
-          selectedColor: colors.primary,
-          selectedTextColor: 'white',
-          borderRadius: 16, // Circular styling
-        },
-      });
-      if (onDatesChange) {
-        onDatesChange(newStartDate, '');
-      }
     }
   };
 
-  useEffect(() => {
-    if (selectedQuickTap) {
-      setMarkedDates({});
-    }
-  }, [selectedQuickTap]);
+  const onQuickButtonPress: OnPressQuickSelectType = useCallback(
+    ({ startDate, endDate, label }) => {
+      if (startDate) {
+        setStartDate(startDate.dateString);
+      }
 
-  console.log({ startDate, endDate });
+      if (endDate) {
+        setEndDate(endDate.dateString);
+      }
+
+      setSelectedQuickTap(label);
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (!startDate || !endDate) {
+      return;
+    }
+
+    onDatesChange?.({
+      startDate,
+      endDate,
+      label: selectedQuickTap ? t(selectedQuickTap) : undefined,
+    });
+  }, [startDate, endDate, selectedQuickTap]);
 
   return (
     <View style={styles.container}>
@@ -262,7 +163,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
             alignItems: 'center',
           }}
         >
-          {startDate && endDate && (
+          {startDate && endDate && !selectedQuickTap && (
             <View
               style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}
             >
@@ -278,7 +179,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
           )}
           {selectedQuickTap && (
             <View style={styles.dateContainer}>
-              <Text style={styles.dateText}>{selectedQuickTap}</Text>
+              <Text style={styles.dateText}>{t(selectedQuickTap)}</Text>
             </View>
           )}
         </View>
@@ -291,7 +192,10 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
         <Calendar
           markingType={startDate === endDate ? undefined : 'period'}
           markedDates={markedDates}
-          onDayPress={onDayPress}
+          onDayPress={(date) => {
+            setSelectedQuickTap(undefined);
+            onDayPress(date);
+          }}
           hideExtraDays={true}
           disableMonthChange={false}
           firstDay={1} // Show Monday as first day of week
@@ -310,103 +214,37 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
       <View style={styles.quickSelect}>
         <View style={styles.row}>
           <QuickSelectButton
-            title={t('Calendar.todayText', QuickSelectOptions.Today)}
+            option={QuickSelectOptions.Today}
             isSelected={selectedQuickTap === QuickSelectOptions.Today}
-            onPress={() => setSelectedQuickTap(QuickSelectOptions.Today)}
+            onPress={onQuickButtonPress}
           />
           <QuickSelectButton
-            title={t('Calendar.tomorrowText', QuickSelectOptions.Tomorrow)}
+            option={QuickSelectOptions.Tomorrow}
             isSelected={selectedQuickTap === QuickSelectOptions.Tomorrow}
-            onPress={() => setSelectedQuickTap(QuickSelectOptions.Tomorrow)}
+            onPress={onQuickButtonPress}
           />
           <QuickSelectButton
-            title={t('Calendar.next7DaysText', QuickSelectOptions.Next7Days)}
+            option={QuickSelectOptions.Next7Days}
             isSelected={selectedQuickTap === QuickSelectOptions.Next7Days}
-            onPress={() => setSelectedQuickTap(QuickSelectOptions.Next7Days)}
+            onPress={onQuickButtonPress}
           />
         </View>
         <View style={styles.row}>
           <QuickSelectButton
-            title={t('Calendar.thisMonthText', QuickSelectOptions.ThisMonth)}
+            option={QuickSelectOptions.ThisMonth}
             isSelected={selectedQuickTap === QuickSelectOptions.ThisMonth}
-            onPress={() => setSelectedQuickTap(QuickSelectOptions.ThisMonth)}
+            onPress={onQuickButtonPress}
           />
           <View style={styles.quickButton} />
           <QuickSelectButton
-            title={t('Calendar.thisYearText', QuickSelectOptions.ThisYear)}
+            option={QuickSelectOptions.ThisYear}
             isSelected={selectedQuickTap === QuickSelectOptions.ThisYear}
-            onPress={() => setSelectedQuickTap(QuickSelectOptions.ThisYear)}
+            onPress={onQuickButtonPress}
           />
         </View>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  calendar: {
-    paddingHorizontal: 40,
-    paddingTop: 20,
-  },
-  container: {
-    backgroundColor: '#fff',
-    paddingBottom: 200,
-  },
-  dateContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'baseline',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    backgroundColor: colors.lightGray,
-    padding: 20,
-  },
-  quickSelect: {
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: colors.primary,
-    marginHorizontal: 20,
-    marginTop: 20,
-  },
-  quickButton: {
-    flex: 1,
-    backgroundColor: colors.primary,
-    padding: 10,
-    borderRadius: 20,
-    margin: 5,
-    alignItems: 'center',
-  },
-  textButton: {
-    color: 'white',
-    fontFamily: fontFamily.extraBold,
-    fontSize: 18,
-  },
-  row: {
-    flexDirection: 'row',
-  },
-  dateText: {
-    color: colors.gray100,
-    fontSize: 18,
-    fontFamily: fontFamily.medium,
-  },
-  close: {
-    color: colors.gray200,
-    fontSize: 18,
-    fontFamily: fontFamily.medium,
-  },
-  apply: {
-    color: colors.primary,
-    fontSize: 18,
-    fontFamily: fontFamily.medium,
-  },
-  applyButton: {
-    borderRadius: 30,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    backgroundColor: 'white',
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-  },
-});
 
 export default DateRangePicker;

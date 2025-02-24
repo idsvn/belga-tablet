@@ -104,8 +104,11 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 600,
     fontFamily: fontFamily.semiBold,
+    color: colors.darkBlue200,
   },
-  lastUpdateTime: {},
+  lastUpdateTime: {
+    color: colors.darkBlue200,
+  },
   dropdownText: {
     fontFamily: fontFamily.semiBold,
     fontSize: 16,

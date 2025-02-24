@@ -29,16 +29,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  redCircle: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: colors.red1,
+  header: {
+    fontSize: 16,
+    fontFamily: fontFamily.bold,
+    color: colors.gray,
+    paddingTop: 18,
+    paddingBottom: 24,
   },
-  liveTitle: {
-    fontFamily: fontFamily.medium,
-    fontSize: 20,
-    color: colors.red1,
+  sectionList: {
+    paddingTop: 24,
+    marginTop: 30,
+    borderTopColor: colors.lightGray,
+    borderTopWidth: 1,
   },
   searchContainer: {
     flexDirection: 'row',
@@ -119,6 +121,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 10,
     gap: 10,
+  },
+  loadMoreButton: {
+    borderColor: colors.primary,
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 10,
+    alignItems: 'center',
+  },
+  loadMore: {
+    color: colors.primary,
+    fontFamily: fontFamily.semiBold,
+    fontSize: 16,
   },
 });
 
