@@ -14,6 +14,7 @@ import IntroduceScreen from 'src/screens/IntroduceScreen';
 import NewspaperDetailScreen from 'src/screens/NewspaperDetailScreen';
 import NewspaperScreen from 'src/screens/NewspaperScreen';
 import ReportIssueScreen from 'src/screens/ReportIssueScreen';
+import ShareScreen from 'src/screens/ShareScreen';
 import SignInScreen from 'src/screens/SignInScreen';
 
 import { replace, userSessionManager } from 'App';
@@ -72,7 +73,7 @@ const RootStackNavigator = () => {
     <RootStack.Navigator
       screenOptions={{
         headerShown: false,
-        gestureEnabled: true,
+        gestureEnabled: false,
       }}
       initialRouteName={routeName}
     >
@@ -115,6 +116,12 @@ const RootStackNavigator = () => {
       <RootStack.Screen
         name={PATH_SCREEN.REPORT_ISSUE_SCREEN}
         component={ReportIssueScreen}
+        options={optionsMain}
+      />
+      {/* Share Screen */}
+      <RootStack.Screen
+        name={PATH_SCREEN.SHARE_SCREEN}
+        component={ShareScreen}
         options={optionsMain}
       />
 

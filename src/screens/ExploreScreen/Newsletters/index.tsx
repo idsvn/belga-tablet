@@ -161,6 +161,7 @@ export const NewsLettersPage = memo(() => {
         showsVerticalScrollIndicator={false}
         stickySectionHeadersEnabled={false}
         style={styles.sectionList}
+        contentContainerStyle={{ paddingBottom: 40 }}
         refreshControl={
           <RefreshControl refreshing={isLoading} onRefresh={refetch} />
         }

@@ -1,6 +1,7 @@
-import { TouchableOpacity, useWindowDimensions, View } from 'react-native';
+import { useWindowDimensions, View } from 'react-native';
 
 import moment from 'moment';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import Text from 'components/customs/Text';
 import ImageWithSkeleton from 'components/ImageWithSkeleton';
@@ -14,7 +15,7 @@ import styles from './styles';
 const ArticleItem = (props: ArticleItemProps) => {
   const { title, imageUrl, publishDate, unread, onPress } = props;
 
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   const showPublishDate = (publishDate: string) => {
     return moment(publishDate).isSame(moment(), 'day')
@@ -22,12 +23,14 @@ const ArticleItem = (props: ArticleItemProps) => {
       : moment(publishDate).format('DD/MM/YYYY');
   };
 
+  const contentWidth = width / 2 - theme.spacing.paddingHorizontalContent - 10;
+
   return (
     <TouchableOpacity
       style={[
         styles.container,
         {
-          width: width / 2 - theme.spacing.paddingHorizontalContent - 10,
+          width: contentWidth,
           opacity: unread ? 1 : 0.6,
         },
       ]}
@@ -36,7 +39,8 @@ const ArticleItem = (props: ArticleItemProps) => {
       <ImageWithSkeleton
         imageSource={imageUrl}
         resizeMode="contain"
-        height={height / 2}
+        width={contentWidth}
+        height={contentWidth * 1.4}
         style={styles.imageView}
       />
       <View style={styles.titleView}>

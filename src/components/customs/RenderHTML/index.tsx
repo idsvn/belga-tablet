@@ -28,7 +28,7 @@ const RenderHTMLCustom: React.FC<RenderHTMLCustomProps> = ({
             fontFamily: theme.fontFamily.regular,
             color: theme.colors.textPrimary,
             fontSize: fontSize + 2,
-            lineHeight: 20,
+            lineHeight: fontSize * 1.4,
           },
           contentModel: HTMLContentModel.block,
         }),
@@ -37,7 +37,7 @@ const RenderHTMLCustom: React.FC<RenderHTMLCustomProps> = ({
           mixedUAStyles: {
             fontFamily: theme.fontFamily.regular,
             color: theme.colors.textPrimary,
-            lineHeight: 17,
+            lineHeight: fontSize * 1.4,
           },
           contentModel: HTMLContentModel.block,
         }),
@@ -46,7 +46,7 @@ const RenderHTMLCustom: React.FC<RenderHTMLCustomProps> = ({
           mixedUAStyles: {
             fontFamily: theme.fontFamily.regular,
             color: theme.colors.textPrimary,
-            fontSize: fontSize + 4,
+            lineHeight: fontSize * 1.4,
           },
           contentModel: HTMLContentModel.block,
         }),
@@ -55,7 +55,7 @@ const RenderHTMLCustom: React.FC<RenderHTMLCustomProps> = ({
           mixedUAStyles: {
             fontFamily: theme.fontFamily.regular,
             color: theme.colors.textPrimary,
-            fontSize: fontSize + 2,
+            lineHeight: fontSize * 1.4,
           },
           contentModel: HTMLContentModel.block,
         }),

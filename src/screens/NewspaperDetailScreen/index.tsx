@@ -201,7 +201,7 @@ const NewspaperDetailScreen = () => {
             ))}
             <View style={styles.htmlView}>
               <RenderHTML
-                source={{ html: newspaperDetail?.body || '' }}
+                source={{ html: `<p>${newspaperDetail?.body || ''}</p>` }}
                 fontSize={fontSizeDefault}
               />
             </View>

@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { FlatList, PanResponder, TouchableOpacity, View } from 'react-native';
+import { PanResponder, Platform, TouchableOpacity, View } from 'react-native';
 
 import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
 import { useTranslation } from 'react-i18next';
 import FastImage from 'react-native-fast-image';
+import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { PATH_SCREEN } from 'src/constants/pathName';
@@ -155,6 +156,11 @@ const NewspaperScreen = () => {
         resizeMode="contain"
         style={[styles.image]}
       />
+      {Platform.OS === 'android' && (
+        <TouchableOpacity
+          style={{ position: 'absolute', width: '100%', height: '100%' }}
+        ></TouchableOpacity>
+      )}
 
       {item?.newsObjects?.map((newsObject: NewsObject) =>
         newsObject?.zones?.map((zone, index) => (

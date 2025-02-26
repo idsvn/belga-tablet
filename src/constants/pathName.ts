@@ -9,6 +9,8 @@ export enum PATH_SCREEN {
 
   REPORT_ISSUE_SCREEN = 'REPORT_ISSUE_SCREEN',
 
+  SHARE_SCREEN = 'SHARE_SCREEN',
+
   // Main
   MAIN = 'MAIN',
 

@@ -86,6 +86,21 @@ const localizationString = {
         },
       },
     },
+    ShareScreen: {
+      shareThisArticle: 'Share this article',
+      shareLink: 'SHARE LINK',
+      shareOnX: 'Share on X',
+      shareOnLinkedin: 'Share on LinkedIn',
+      emailYourTeam: 'E-mail your team',
+      search: 'Search...',
+      noRecipientsSelected: 'No recipients selected',
+      noRecipientsDescription:
+        'Search for recipients to add them to your selection.',
+      selected: 'selected',
+      clearSelection: 'Clear selection',
+      notes: 'NOTES',
+      send: 'SEND',
+    },
   },
 };
 

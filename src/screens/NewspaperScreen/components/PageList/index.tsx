@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, FlatList, TouchableOpacity, View } from 'react-native';
+import { Animated, TouchableOpacity, View } from 'react-native';
 
 import { useTranslation } from 'react-i18next';
 import FastImage from 'react-native-fast-image';
+import { FlatList } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Entypo';
 
 import Text from 'components/customs/Text';

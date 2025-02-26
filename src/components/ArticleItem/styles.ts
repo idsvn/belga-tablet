@@ -1,11 +1,12 @@
 import { StyleSheet } from 'react-native';
 
 import theme from 'src/themes';
+import colors from 'src/themes/colors';
 
 const styles = StyleSheet.create({
   container: {},
   imageView: {
-    shadowColor: '#000',
+    shadowColor: colors.lightGray,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -28,7 +29,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    marginVertical: 10,
+    marginBottom: 10,
+    paddingLeft: 5,
+    marginTop: 5,
   },
   dotView: {
     height: 10,

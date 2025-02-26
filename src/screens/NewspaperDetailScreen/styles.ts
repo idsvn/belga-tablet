@@ -83,7 +83,6 @@ const styles = StyleSheet.create({
   },
   issueView: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     paddingVertical: 20,
     alignItems: 'center',
     borderTopColor: theme.colors.gray400,
@@ -91,20 +90,24 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.colors.gray400,
     borderBottomWidth: 1,
     marginVertical: 20,
+    justifyContent: 'flex-start',
   },
   issueText: {
+    flex: 1,
     color: theme.colors.gray,
     fontSize: 14,
     fontFamily: theme.fontFamily.semiBold,
   },
   issueButton: {
     flexDirection: 'row',
-    gap: 5,
+    gap: 10,
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: theme.colors.primary,
     paddingVertical: 6,
     paddingHorizontal: 20,
     borderRadius: 5,
+    flexShrink: 1,
   },
   issueTextButton: {
     fontSize: 14,

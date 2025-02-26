@@ -64,7 +64,15 @@ const BelgaItem = ({ data }: BelgaItemProps) => {
         <TouchableOpacity onPress={onFavorite}>
           <FavoritesSvg width={'12'} height={'21'} checked={isFavorite} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity
+          onPress={() => {
+            navigate(PATH_SCREEN.SHARE_SCREEN, {
+              id: data.uuid,
+              source: data.source,
+              title: data.title,
+            });
+          }}
+        >
           <ShareIcon width={'12'} height={'21'} />
         </TouchableOpacity>
         {!!imageUrl && (
