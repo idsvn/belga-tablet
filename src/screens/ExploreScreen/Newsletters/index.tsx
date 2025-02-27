@@ -23,6 +23,8 @@ import { Letter } from 'src/models/newslettersModel';
 
 import { RootState } from 'src/redux/store';
 
+import NewsLetterDetailScreen from 'src/screens/NewsLetterDetailScreen';
+
 import CalendarButton from 'components/CalendarButton';
 import SearchIconSvg from 'components/svg/SearchIconSvg';
 import VoiceIconSvg from 'components/svg/VoiceIconSvg';
@@ -47,6 +49,8 @@ export const NewsLettersPage = memo(() => {
   const debounceSearchText = useDebounce(searchText, 500);
 
   const [newsletters, setNewsletters] = useState<Letter[]>([]);
+
+  const [detailLetter, setDetailLetter] = useState<Letter>();
 
   const [date, setDate] = useState(() => {
     const formatDate = (date: Date): string => {
@@ -79,7 +83,7 @@ export const NewsLettersPage = memo(() => {
     end,
     count,
     offset,
-    enabled: isFocused,
+    enabled: isFocused && !detailLetter,
     type: 'NEWSLETTER',
     order: '-publishDate',
     searchtext: debounceSearchText,
@@ -88,7 +92,13 @@ export const NewsLettersPage = memo(() => {
   const isLoadMore = isFetching && count !== undefined;
 
   const renderItem = useCallback(({ item }) => {
-    return <LetterItem key={item.id} data={item} />;
+    return (
+      <LetterItem
+        key={item.id}
+        data={item}
+        openLetterDetail={setDetailLetter}
+      />
+    );
   }, []);
 
   const onEndReached = useCallback(() => {
@@ -140,59 +150,67 @@ export const NewsLettersPage = memo(() => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <View style={styles.searchView}>
-          <SearchIconSvg />
-          <TextInput
-            style={styles.searchInput}
-            placeholder={t('ExploreScreen.newsLettersSearchPlaceHolder')}
-            placeholderTextColor={colors.gray200}
-            onChangeText={onSearchChanged}
-          />
-          <TouchableOpacity onPress={() => {}}>
-            <VoiceIconSvg />
-          </TouchableOpacity>
-        </View>
-
-        <CalendarButton onSelectStartAndEnd={onSelectStartAndEnd} />
-      </View>
-      <SectionList
-        showsVerticalScrollIndicator={false}
-        stickySectionHeadersEnabled={false}
-        style={styles.sectionList}
-        contentContainerStyle={{ paddingBottom: 40 }}
-        refreshControl={
-          <RefreshControl refreshing={isLoading} onRefresh={refetch} />
-        }
-        sections={groupedData}
-        renderItem={renderItem}
-        keyExtractor={(item) => JSON.stringify(item)}
-        renderSectionHeader={({ section: { title } }) => (
-          <Text key={title} style={styles.header}>
-            {title}
-          </Text>
-        )}
-        ListFooterComponent={() => {
-          if (newsletters.length === 0) {
-            return undefined;
-          }
-
-          return (
-            <TouchableOpacity
-              style={styles.loadMoreButton}
-              onPress={onEndReached}
-            >
-              {isLoadMore ? (
-                <ActivityIndicator size="small" color={colors.primary} />
-              ) : (
-                <Text style={styles.loadMore}>Load more</Text>
-              )}
+    <>
+      <View style={styles.container}>
+        <View style={styles.searchContainer}>
+          <View style={styles.searchView}>
+            <SearchIconSvg />
+            <TextInput
+              style={styles.searchInput}
+              placeholder={t('ExploreScreen.newsLettersSearchPlaceHolder')}
+              placeholderTextColor={colors.gray200}
+              onChangeText={onSearchChanged}
+            />
+            <TouchableOpacity onPress={() => {}}>
+              <VoiceIconSvg />
             </TouchableOpacity>
-          );
-        }}
-        onEndReachedThreshold={0.5}
-      />
-    </View>
+          </View>
+
+          <CalendarButton onSelectStartAndEnd={onSelectStartAndEnd} />
+        </View>
+        <SectionList
+          showsVerticalScrollIndicator={false}
+          stickySectionHeadersEnabled={false}
+          style={styles.sectionList}
+          contentContainerStyle={{ paddingBottom: 40 }}
+          refreshControl={
+            <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+          }
+          sections={groupedData}
+          renderItem={renderItem}
+          keyExtractor={(item) => JSON.stringify(item)}
+          renderSectionHeader={({ section: { title } }) => (
+            <Text key={title} style={styles.header}>
+              {title}
+            </Text>
+          )}
+          ListFooterComponent={() => {
+            if (newsletters.length === 0) {
+              return undefined;
+            }
+
+            return (
+              <TouchableOpacity
+                style={styles.loadMoreButton}
+                onPress={onEndReached}
+              >
+                {isLoadMore ? (
+                  <ActivityIndicator size="small" color={colors.primary} />
+                ) : (
+                  <Text style={styles.loadMore}>Load more</Text>
+                )}
+              </TouchableOpacity>
+            );
+          }}
+          onEndReachedThreshold={0.5}
+        />
+      </View>
+      {detailLetter && (
+        <NewsLetterDetailScreen
+          onBack={() => setDetailLetter(undefined)}
+          letter={detailLetter}
+        />
+      )}
+    </>
   );
 });

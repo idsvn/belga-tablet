@@ -12,15 +12,23 @@ import Text from 'components/customs/Text';
 
 import styles from './styles';
 
-const LetterItem = (props: { data: Letter }) => {
-  const { data } = props;
+const LetterItem = (props: {
+  data: Letter;
+  openLetterDetail: (letter: Letter) => void;
+}) => {
+  const { data, openLetterDetail } = props;
 
   const { t } = useTranslation();
 
   const { name, publishDate } = data ?? {};
 
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => {
+        openLetterDetail(data);
+      }}
+    >
       <View style={styles.titleView}>
         <View style={styles.descriptionContainer}>
           <Text style={styles.titleText} numberOfLines={1}>

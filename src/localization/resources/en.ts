@@ -45,6 +45,7 @@ const localizationString = {
       languages: 'Languages',
       contentTypes: 'Content types',
       newsLettersSearchPlaceHolder: 'Search for newsletters',
+      newsLetter: 'Newsletters',
     },
     NewspaperScreen: {
       pageText: 'Page',
