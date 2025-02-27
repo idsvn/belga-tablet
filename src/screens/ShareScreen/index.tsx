@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Clipboard,
   Linking,
@@ -9,6 +9,11 @@ import {
 
 import { useTranslation } from 'react-i18next';
 import { showMessage } from 'react-native-flash-message';
+import { useSelector } from 'react-redux';
+
+import { useSendShare } from 'src/services/shareService';
+
+import { RootState } from 'src/redux/store';
 
 import Text from 'components/customs/Text';
 import NewspaperDetailHeader from 'components/Header/NewspaperDetailHeader';
@@ -19,7 +24,7 @@ import XIcon from 'components/svg/XIconSvg';
 
 import SearchEmail from './components/SearchEmail';
 
-import { getParams } from 'App';
+import { getParams, goBack } from 'App';
 
 import colors from 'src/themes/colors';
 
@@ -33,6 +38,8 @@ const ShareScreen = () => {
   const shareLink = `https://share.belga.press/news/${id}`;
 
   const shareMessage = `${source + ' : ' + title} \n ${shareLink}`;
+
+  const [contactIds, setContactIds] = useState<number[]>([]);
 
   const shareToX = () => {
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}`;
@@ -50,7 +57,29 @@ const ShareScreen = () => {
     );
   };
 
-  const onNoteSearchChanged = useCallback((text: string) => {}, []);
+  const userId = useSelector<RootState, number>(
+    (state) => state.userStore.user.id,
+  );
+
+  const userEmail = useSelector<RootState, string>(
+    (state) => state.userStore.user.email,
+  );
+
+  const [personalizedText, setPersonalizedText] = useState('');
+
+  const { mutateAsync } = useSendShare({
+    userId,
+    newsObjects: [id],
+    recipients: [],
+    contactIds: contactIds,
+    groupIds: [],
+    sender: userEmail,
+    personalizedText,
+  });
+
+  const onNoteSearchChanged = useCallback((text: string) => {
+    setPersonalizedText(text);
+  }, []);
 
   return (
     <PrimaryLayout
@@ -94,7 +123,7 @@ const ShareScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <SearchEmail />
+        <SearchEmail setContactIds={setContactIds} />
         <View style={styles.notesContainer}>
           <Text style={styles.notesText}>{t('ShareScreen.notes')}</Text>
           <TextInput
@@ -104,7 +133,34 @@ const ShareScreen = () => {
             onChangeText={onNoteSearchChanged}
           />
         </View>
-        <TouchableOpacity style={styles.reportButton}>
+        <TouchableOpacity
+          style={styles.reportButton}
+          onPress={() => {
+            if (contactIds.length === 0) {
+              showMessage({
+                message: 'Missing information',
+                type: 'danger',
+              });
+
+              return;
+            }
+
+            mutateAsync()
+              .then(() => {
+                showMessage({
+                  message: 'Email has been sent',
+                  type: 'success',
+                });
+                goBack();
+              })
+              .catch(() => {
+                showMessage({
+                  message: 'Error',
+                  type: 'danger',
+                });
+              });
+          }}
+        >
           <Text style={styles.reportButtonText}>SEND</Text>
         </TouchableOpacity>
       </View>

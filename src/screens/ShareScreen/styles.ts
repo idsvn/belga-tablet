@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   reportButtonText: {
     color: theme.colors.textWhite,
     fontWeight: 'bold',
-    fontSize: 22,
+    fontSize: 20,
   },
   copyContainer: {
     flexDirection: 'row',

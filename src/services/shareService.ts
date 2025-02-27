@@ -1,28 +1,35 @@
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 
 import { API_BASE_URL } from 'src/constants/apiURL';
 import { QUERY_KEY } from 'src/constants/queryKey';
+
+import { ContactResponse } from 'src/models/contactModel';
 
 import axiosService from './axiosService';
 
 interface GetContactParams {
   userId: number;
-  contactids: string[];
-  search: string;
+  contactids?: string[];
+  search?: string;
 }
 
 interface ShareNewsObjectsParams {
   userId: number;
   newsObjects: string[];
-  contactIds: string[];
+  recipients: string[];
+  contactIds: number[];
+  groupIds: string[];
   sender: string;
   personalizedText: string;
 }
 
 const shareService = {
-  getContact: async ({ userId, ...params }: GetContactParams) => {
+  getContact: async ({
+    userId,
+    ...params
+  }: GetContactParams): Promise<ContactResponse> => {
     return axiosService()({
-      url: `${API_BASE_URL}/user/${userId}/contacts`,
+      url: `${API_BASE_URL}/users/${userId}/contacts`,
       method: 'GET',
       params,
     })
@@ -33,7 +40,7 @@ const shareService = {
   },
   shareNewsObjects: ({ userId, ...params }: ShareNewsObjectsParams) => {
     return axiosService()({
-      url: `${API_BASE_URL}/user/${userId}/newsobjects/share`,
+      url: `${API_BASE_URL}/users/${userId}/newsobjects/share`,
       method: 'POST',
       data: params,
     })
@@ -59,13 +66,10 @@ export function useGetContact({
   );
 }
 
-export function useSendShare({
-  enabled = true,
-  ...params
-}: ShareNewsObjectsParams & { enabled?: boolean }) {
+export function useSendShare({ ...params }: ShareNewsObjectsParams) {
   const { userId, newsObjects, contactIds, sender, personalizedText } = params;
 
-  return useQuery(
+  return useMutation(
     [
       QUERY_KEY.CONTACT,
       userId,
@@ -75,9 +79,6 @@ export function useSendShare({
       personalizedText,
     ],
     () => shareService.shareNewsObjects(params),
-    {
-      enabled,
-    },
   );
 }
 
