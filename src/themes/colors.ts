@@ -2,6 +2,7 @@ const colors = {
   primary: '#3349E8',
 
   //
+  blue1: '#0074C2',
   lightBlue100: '#8FAFFF',
   lightBlue200: '#D9E4FF',
   lightBlue300: '#F5F8FF',

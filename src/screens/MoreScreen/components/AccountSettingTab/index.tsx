@@ -3,9 +3,13 @@ import { View } from 'react-native';
 
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from 'react-native-element-dropdown';
+import { useDispatch, useSelector } from 'react-redux';
 import i18n, { updateLanguage } from 'src/localization';
 
 import { Language } from 'src/models/systemModel';
+
+import { setPaginationCount } from 'src/redux/slices/systemSlice';
+import { RootState } from 'src/redux/store';
 
 import Text from 'components/customs/Text';
 
@@ -28,6 +32,14 @@ const paginationData = [
 const AccountSettingTab = () => {
   const { t } = useTranslation();
 
+  const dispatch = useDispatch();
+
+  const paginationCount = useSelector<RootState, number>(
+    (state) => state.systemStore.paginationCount,
+  );
+
+  console.log(paginationCount);
+
   const handleChangeLanguage = (data: { label: string; value: Language }) => {
     updateLanguage(data.value);
   };
@@ -35,7 +47,9 @@ const AccountSettingTab = () => {
   const handleChangePaginationData = (data: {
     label: string;
     value: string;
-  }) => {};
+  }) => {
+    dispatch(setPaginationCount(Number(data.value)));
+  };
 
   return (
     <View style={styles.container}>
@@ -64,7 +78,7 @@ const AccountSettingTab = () => {
               color: theme.colors.primary,
               textAlign: 'center',
             }}
-            value={'20'}
+            value={paginationCount.toString()}
             labelField={'label'}
             valueField={'value'}
             maxHeight={300}

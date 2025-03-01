@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { View } from 'react-native';
 
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -42,7 +43,7 @@ const RealtimeFeed = () => {
   };
 
   return (
-    <>
+    <View>
       <ShowMore
         title={t('ExploreScreen.realtimeFeedText')}
         showMoreText={t('ExploreScreen.showMoreRealtimeFeedText')}
@@ -54,7 +55,7 @@ const RealtimeFeed = () => {
           onPress={() => item?.uuid && handleNavigate(item.uuid)}
         />
       ))}
-    </>
+    </View>
   );
 };
 

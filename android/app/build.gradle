@@ -87,7 +87,7 @@ android {
         versionCode project.env.get("VERSION_CODE_ANDROID").toInteger()
         versionName project.env.get("VERSION_NAME_ANDROID")
 
-        resValue "string", "app_name", project.env.get("APP_NAME") ?: "Belga Press Tablet"
+        resValue "string", "app_name", project.env.get("APP_NAME") ?: "Belga.press - tablet"
 
     }
     signingConfigs {

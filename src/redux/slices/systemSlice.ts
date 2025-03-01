@@ -6,12 +6,14 @@ interface FontSize {
 
 interface initialStateType {
   fontSize: FontSize;
+  paginationCount: number;
 }
 
 const initialState: initialStateType = {
   fontSize: {
     fontSizeDefault: 14,
   },
+  paginationCount: 20,
 };
 
 const systemSlice = createSlice({
@@ -27,10 +29,18 @@ const systemSlice = createSlice({
     resetFontSize(state) {
       state.fontSize.fontSizeDefault = 14;
     },
+    setPaginationCount(state, action) {
+      state.paginationCount = action.payload;
+    },
   },
 });
 
 const { reducer, actions } = systemSlice;
 
-export const { increaseFontSize, decreaseFontSize, resetFontSize } = actions;
+export const {
+  increaseFontSize,
+  decreaseFontSize,
+  resetFontSize,
+  setPaginationCount,
+} = actions;
 export default reducer;

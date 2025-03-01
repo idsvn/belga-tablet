@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { View } from 'react-native';
 
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -33,7 +34,7 @@ const LatestPressRelease = () => {
   }, [user]);
 
   return (
-    <>
+    <View>
       <ShowMore
         title={t('ExploreScreen.latestPressReleaseTitleText')}
         showMoreText={t('ExploreScreen.showMoreTextLatestPressRelease')}
@@ -42,7 +43,7 @@ const LatestPressRelease = () => {
         latestPressRelease?.map((item, index) => (
           <LatestPressReleaseItem key={index} pressRelease={item} />
         ))}
-    </>
+    </View>
   );
 };
 

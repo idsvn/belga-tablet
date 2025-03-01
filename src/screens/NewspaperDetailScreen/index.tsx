@@ -82,6 +82,13 @@ const NewspaperDetailScreen = () => {
         <NewspaperDetailHeader
           isFavorites={isFavorite}
           onPressFavorites={onPressFavorites}
+          onPressShare={() =>
+            navigate(PATH_SCREEN.SHARE_SCREEN, {
+              id,
+              source: newspaperDetail?.source,
+              title: newspaperDetail?.title,
+            })
+          }
         />
       }
     >
@@ -201,7 +208,7 @@ const NewspaperDetailScreen = () => {
             ))}
             <View style={styles.htmlView}>
               <RenderHTML
-                source={{ html: `<p>${newspaperDetail?.body || ''}</p>` }}
+                value={`<p>${newspaperDetail?.body || ''}</p>`}
                 fontSize={fontSizeDefault}
               />
             </View>

@@ -38,7 +38,7 @@ const ArticleList = () => {
   }, [user]);
 
   return (
-    <>
+    <View>
       <ShowMore
         title={t('ExploreScreen.titleText')}
         showMoreText={t('ExploreScreen.showMoreText')}
@@ -65,7 +65,7 @@ const ArticleList = () => {
             />
           ))}
       </View>
-    </>
+    </View>
   );
 };
 

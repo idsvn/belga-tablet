@@ -1,21 +1,35 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { RefreshControl } from 'react-native';
+import { memo, useCallback, useEffect, useState } from 'react';
+import { FlatList, RefreshControl } from 'react-native';
 
 import { useIsFocused } from '@react-navigation/native';
-import { FlatList } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 
-import { useGetRealtimeFeed } from 'src/services/newsObjectService';
+import { useGetKioskNewsObject } from 'src/services/newsObjectService';
 
 import { RootState } from 'src/redux/store';
 
-import { LoadingView, RealTimeLoadingView } from './components/LoadingView';
+import RealtimeFeedItem from 'src/screens/ExploreScreen/RealtimeFeed/RealtimeFeedItem';
 
-import RealtimeFeedItem from './RealtimeFeedItem';
+import { LoadingView, RealTimeLoadingView } from './LoadingView';
 
+interface NewsLetterSearchDetailType {
+  newsLetterId?: number;
+  searchtext: string;
+  start: string;
+  end: string;
+}
 const STEP = 20;
 
-export const RealTimeFeedPage = memo(() => {
+const NewsLetterSearchDetail = ({
+  newsLetterId,
+  searchtext,
+  start,
+  end,
+}: NewsLetterSearchDetailType) => {
+  const userId = useSelector<RootState, number>(
+    (state) => state.userStore.user.id,
+  );
+
   const paginationCount = useSelector<RootState, number>(
     (state) => state.systemStore.paginationCount,
   );
@@ -24,36 +38,27 @@ export const RealTimeFeedPage = memo(() => {
 
   const [realtimeFeeds, setRealtimeFeeds] = useState<any>();
 
-  const { start, end } = useMemo(() => {
-    const formatDate = (date: Date): string => {
-      return date.toISOString().split('T')[0];
-    };
-
-    const today = new Date();
-
-    const sevenDaysAgo = new Date();
-
-    sevenDaysAgo.setDate(today.getDate() - 7);
-
-    const end = formatDate(today);
-
-    const start = formatDate(sevenDaysAgo);
-
-    return { start, end };
-  }, []);
-
   const isFocused = useIsFocused();
 
-  const { data, isFetching, refetch, isLoading } = useGetRealtimeFeed({
+  const {
+    data: newsLetterData,
+    isFetching,
+    isLoading,
+    refetch,
+  } = useGetKioskNewsObject({
+    offset,
     start,
     end,
-    subscription: true,
     count: paginationCount,
-    offset,
-    enabled: isFocused,
+    userId: userId,
+    newsletterId: newsLetterId ?? 1,
+    highlight: true,
+    order: '-PUBLISHDATE',
+    searchtext: searchtext,
+    enabled: isFocused && !!searchtext && !!newsLetterId,
   });
 
-  const isLoadMore = isFetching;
+  const isLoadMore = isFetching && paginationCount !== undefined;
 
   const renderItem = useCallback(({ item }) => {
     return <RealtimeFeedItem {...item} />;
@@ -64,9 +69,9 @@ export const RealTimeFeedPage = memo(() => {
   }, []);
 
   useEffect(() => {
-    if (data?.data) {
+    if (newsLetterData?.data) {
       setRealtimeFeeds((prev) => {
-        const combined = [prev ?? [], data?.data ?? []].flat();
+        const combined = [prev ?? [], newsLetterData?.data ?? []].flat();
 
         const uniqueMap = combined.reduce((acc, item) => {
           acc[item.uuid] = item;
@@ -77,7 +82,7 @@ export const RealTimeFeedPage = memo(() => {
         return Object.values(uniqueMap);
       });
     }
-  }, [data]);
+  }, [newsLetterData]);
 
   if (!realtimeFeeds) {
     return <RealTimeLoadingView />;
@@ -96,4 +101,6 @@ export const RealTimeFeedPage = memo(() => {
       onEndReached={onEndReached}
     />
   );
-});
+};
+
+export default memo(NewsLetterSearchDetail);

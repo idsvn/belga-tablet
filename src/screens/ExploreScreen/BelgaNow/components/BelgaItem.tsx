@@ -62,7 +62,7 @@ const BelgaItem = ({ data }: BelgaItemProps) => {
       </View>
       <View style={styles.footer}>
         <TouchableOpacity onPress={onFavorite}>
-          <FavoritesSvg width={'12'} height={'21'} checked={isFavorite} />
+          <FavoritesSvg width={'18'} height={'21'} checked={isFavorite} />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
@@ -73,7 +73,7 @@ const BelgaItem = ({ data }: BelgaItemProps) => {
             });
           }}
         >
-          <ShareIcon width={'12'} height={'21'} />
+          <ShareIcon width={'18'} height={'21'} />
         </TouchableOpacity>
         {!!imageUrl && (
           <FastImage
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   footer: {
-    gap: 20,
+    gap: 16,
     alignItems: 'center',
     flexDirection: 'row',
     paddingLeft: 10,

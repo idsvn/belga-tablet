@@ -30,6 +30,7 @@ const persistConfig = {
     'deliverablesStore',
     'newsObjectStore',
     'authenticationStore',
+    'systemStore',
   ],
 };
 

@@ -30,6 +30,7 @@ const NewspaperDetailHeader = (props: NewspaperDetailHeaderProps) => {
     isFavorites = false,
     onPressBack,
     onPressFavorites,
+    onPressShare,
   } = props;
 
   const dispatch = useDispatch<AppDispatch>();
@@ -61,7 +62,7 @@ const NewspaperDetailHeader = (props: NewspaperDetailHeaderProps) => {
               height={'27'}
             />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onPressShare}>
             <ShareIcon />
           </TouchableOpacity>
         </View>

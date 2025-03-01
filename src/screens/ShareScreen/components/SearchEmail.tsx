@@ -110,21 +110,8 @@ const SearchEmail = ({
   );
 
   const renderRecipientItem = useCallback(({ item }: { item: Contact }) => {
-    const isSelected = selectedContacts.some((it) => it.id === item.id);
-
     return (
-      <TouchableOpacity
-        style={[styles.contactItem, { backgroundColor: 'white' }]}
-        onPress={() => {
-          setSelectedContacts((prev) => {
-            if (prev.some((contact) => contact.id === item.id)) {
-              return prev.filter((contact) => contact.id !== item.id);
-            } else {
-              return [...prev, item];
-            }
-          });
-        }}
-      >
+      <View style={[styles.contactItem, { backgroundColor: 'white' }]}>
         <View style={{ alignSelf: 'flex-start', paddingTop: 4 }}>
           <ProfileIconSvg />
         </View>
@@ -146,8 +133,16 @@ const SearchEmail = ({
             <Text style={styles.email}>{item.email}</Text>
           </View>
         </View>
-        {isSelected ? <TrashIconSvg color={colors.red1} /> : <PlusIconSvg />}
-      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setSelectedContacts((prev) => {
+              return prev.filter((contact) => contact.id !== item.id);
+            });
+          }}
+        >
+          <TrashIconSvg color={colors.red1} />
+        </TouchableOpacity>
+      </View>
     );
   }, []);
 

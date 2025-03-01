@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { View } from 'react-native';
 
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
@@ -9,6 +10,8 @@ import {
 } from 'src/redux/slices/deliverablesSlice';
 import { getNewsObject } from 'src/redux/slices/newsObjectSlice';
 import { AppDispatch } from 'src/redux/store';
+
+import BelgaNowTicker from './components/BelgaNowTicker';
 
 import ArticleList from '../ArticleList';
 import LatestPressRelease from '../LatestPressRelease';
@@ -30,15 +33,21 @@ export function Explore() {
   };
 
   return (
-    <ScrollView
-      style={{ flex: 1 }}
-      refreshControl={
-        <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
-      }
-    >
-      <ArticleList />
-      <RealtimeFeed />
-      <LatestPressRelease />
-    </ScrollView>
+    <>
+      <BelgaNowTicker />
+      <ScrollView
+        style={{ flex: 1 }}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
+        }
+      >
+        <View style={{ flex: 1, gap: 80 }}>
+          <ArticleList />
+          <RealtimeFeed />
+          <LatestPressRelease />
+        </View>
+      </ScrollView>
+    </>
   );
 }

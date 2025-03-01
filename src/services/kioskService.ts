@@ -67,10 +67,20 @@ export function useGetNewLetters({
   userId,
   ...params
 }: QueryParams & { userId: number; enabled?: boolean }) {
-  const { count, offset, start, end, order, type } = params;
+  const { count, offset, start, end, order, type, searchtext } = params;
 
   return useQuery(
-    [QUERY_KEY.NEWSLETTER, count, offset, start, end, order, type, userId],
+    [
+      QUERY_KEY.NEWSLETTER,
+      count,
+      offset,
+      start,
+      end,
+      order,
+      type,
+      userId,
+      searchtext,
+    ],
     () => kioskService.getNewLetters(userId, params),
     {
       refetchInterval: 30000,

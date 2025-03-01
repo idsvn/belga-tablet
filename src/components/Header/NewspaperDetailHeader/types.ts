@@ -3,4 +3,5 @@ export interface NewspaperDetailHeaderProps {
   isFavorites?: boolean;
   onPressBack?: () => void;
   onPressFavorites?: () => void;
+  onPressShare?: () => void;
 }

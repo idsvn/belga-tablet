@@ -653,7 +653,7 @@
 				DEVELOPMENT_TEAM = N46XY9PYAV;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = BelgaTabletApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Belga Press Tablet";
+				INFOPLIST_KEY_CFBundleDisplayName = "Belga.press - tablet";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.news";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREFIX_HEADER = "${BUILD_DIR}/GeneratedInfoPlistDotEnv.h";
@@ -694,7 +694,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = N46XY9PYAV;
 				INFOPLIST_FILE = BelgaTabletApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Belga Press Tablet";
+				INFOPLIST_KEY_CFBundleDisplayName = "Belga.press - tablet";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.news";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREFIX_HEADER = "${BUILD_DIR}/GeneratedInfoPlistDotEnv.h";

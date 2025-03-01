@@ -76,7 +76,15 @@ const RealtimeFeedItem = (props: RealtimeFeedItemProps) => {
                   height={'20'}
                 />
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  navigate(PATH_SCREEN.SHARE_SCREEN, {
+                    id: uuid,
+                    source,
+                    title,
+                  })
+                }
+              >
                 <ShareIcon />
               </TouchableOpacity>
             </View>

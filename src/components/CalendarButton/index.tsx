@@ -12,15 +12,25 @@ import { QuickSelectOptions } from 'components/Calendar/type';
 
 interface CalendarButtonProps {
   onSelectStartAndEnd: (startDate: string, endDate: string) => void;
+  singleSelect?: boolean;
+  defaultLabel?: string;
+  initStartDate?: string;
+  initEndDate?: string;
 }
-const CalendarButton = ({ onSelectStartAndEnd }: CalendarButtonProps) => {
+const CalendarButton = ({
+  onSelectStartAndEnd,
+  singleSelect = false,
+  defaultLabel,
+  initStartDate,
+  initEndDate,
+}: CalendarButtonProps) => {
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
 
-  const [title, setTitle] = useState<string>();
+  const [title, setTitle] = useState<string | undefined>(defaultLabel);
 
-  const [startDate, setStartDate] = useState<string>();
+  const [startDate, setStartDate] = useState<string | undefined>(initStartDate);
 
-  const [endDate, setEndDate] = useState<string>();
+  const [endDate, setEndDate] = useState<string | undefined>(initEndDate);
 
   const [selectedQuickTap, setSelectedQuickTap] =
     useState<QuickSelectOptions>();
@@ -32,7 +42,11 @@ const CalendarButton = ({ onSelectStartAndEnd }: CalendarButtonProps) => {
       if (label) {
         setTitle(label);
       } else {
-        setTitle(`${startDate} > ${endDate}`);
+        if (startDate === endDate) {
+          setTitle(startDate);
+        } else {
+          setTitle(`${startDate} > ${endDate}`);
+        }
       }
 
       onSelectStartAndEnd(startDate, endDate);
@@ -63,6 +77,7 @@ const CalendarButton = ({ onSelectStartAndEnd }: CalendarButtonProps) => {
             setStartDate={setStartDate}
             setSelectedQuickTap={setSelectedQuickTap}
             selectedQuickTap={selectedQuickTap}
+            singleSelect={singleSelect}
           />
         </Modal>
       </>

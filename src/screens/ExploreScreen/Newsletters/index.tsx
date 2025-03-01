@@ -1,13 +1,5 @@
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  ActivityIndicator,
-  RefreshControl,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { SectionList } from 'react-native';
+import React, { memo, useCallback, useEffect, useState } from 'react';
+import { TextInput, TouchableOpacity, View } from 'react-native';
 
 import { useIsFocused } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -16,8 +8,6 @@ import { useSelector } from 'react-redux';
 import useDebounce from 'src/hooks/useDebounce';
 
 import { useGetNewLetters } from 'src/services/kioskService';
-
-import { formatDate } from 'src/helpers/utils';
 
 import { Letter } from 'src/models/newslettersModel';
 
@@ -29,7 +19,10 @@ import CalendarButton from 'components/CalendarButton';
 import SearchIconSvg from 'components/svg/SearchIconSvg';
 import VoiceIconSvg from 'components/svg/VoiceIconSvg';
 
+import { LetterEmptyView } from './components/EmptyView';
+import { NewsLetterLoadingView } from './components/LoadingView';
 import LetterItem from './components/NewLettersItem';
+import NewsLetterList from './components/NewsLetterList';
 
 import colors from 'src/themes/colors';
 
@@ -40,7 +33,9 @@ const STEP = 20;
 export const NewsLettersPage = memo(() => {
   const { t } = useTranslation();
 
-  const [count, setCount] = useState<number>(STEP);
+  const paginationCount = useSelector<RootState, number>(
+    (state) => state.systemStore.paginationCount,
+  );
 
   const [offset, setOffset] = useState<number>(0);
 
@@ -48,14 +43,12 @@ export const NewsLettersPage = memo(() => {
 
   const debounceSearchText = useDebounce(searchText, 500);
 
-  const [newsletters, setNewsletters] = useState<Letter[]>([]);
+  const [newsletters, setNewsLetters] = useState<Letter[]>();
 
   const [detailLetter, setDetailLetter] = useState<Letter>();
 
   const [date, setDate] = useState(() => {
-    const formatDate = (date: Date): string => {
-      return date.toISOString().split('T')[0];
-    };
+    const formatDate = (date: Date): string => date.toISOString().split('T')[0];
 
     const today = new Date();
 
@@ -81,7 +74,7 @@ export const NewsLettersPage = memo(() => {
     userId,
     start,
     end,
-    count,
+    paginationCount,
     offset,
     enabled: isFocused && !detailLetter,
     type: 'NEWSLETTER',
@@ -89,52 +82,32 @@ export const NewsLettersPage = memo(() => {
     searchtext: debounceSearchText,
   });
 
-  const isLoadMore = isFetching && count !== undefined;
+  const isLoadMore = isFetching && paginationCount !== undefined;
 
-  const renderItem = useCallback(({ item }) => {
-    return (
+  const renderItem = useCallback(
+    ({ item }) => (
       <LetterItem
         key={item.id}
         data={item}
         openLetterDetail={setDetailLetter}
       />
-    );
-  }, []);
+    ),
+    [],
+  );
 
   const onEndReached = useCallback(() => {
-    setCount(STEP);
     setOffset((prev) => prev + STEP);
   }, []);
 
   const onSearchChanged = useCallback((text) => {
-    setNewsletters([]);
+    setNewsLetters(undefined);
     setSearchText(text);
   }, []);
 
-  // Group data by date
-  const groupedData = useMemo(() => {
-    const grouped: { [key: string]: Letter[] } = {};
-
-    newsletters.forEach((item) => {
-      const dateKey = formatDate(item.publishDate);
-
-      if (!grouped[dateKey]) {
-        grouped[dateKey] = [];
-      }
-
-      grouped[dateKey].push(item);
-    });
-
-    return Object.keys(grouped).map((date) => ({
-      title: date,
-      data: grouped[date],
-    }));
-  }, [newsletters]);
-
-  // Update newsletters state when new data is fetched
   useEffect(() => {
     if (data?.data) {
-      setNewsletters((prev) => {
+      setNewsLetters((prev) => {
+        prev ??= [];
         const newData = data.data.filter(
           (newItem) => !prev.some((prevItem) => prevItem.id === newItem.id),
         );
@@ -146,8 +119,29 @@ export const NewsLettersPage = memo(() => {
 
   const onSelectStartAndEnd = useCallback((start: string, end: string) => {
     setDate({ start, end });
-    setNewsletters([]);
+    setNewsLetters(undefined);
   }, []);
+
+  const ContentView = () => {
+    if (newsletters === undefined) {
+      return <NewsLetterLoadingView />;
+    }
+
+    if (newsletters.length === 0) {
+      return <LetterEmptyView />;
+    }
+
+    return (
+      <NewsLetterList
+        newsletters={newsletters}
+        isLoading={isLoading}
+        refetch={refetch}
+        onEndReached={onEndReached}
+        isLoadMore={isLoadMore}
+        renderItem={renderItem}
+      />
+    );
+  };
 
   return (
     <>
@@ -165,45 +159,12 @@ export const NewsLettersPage = memo(() => {
               <VoiceIconSvg />
             </TouchableOpacity>
           </View>
-
-          <CalendarButton onSelectStartAndEnd={onSelectStartAndEnd} />
+          <CalendarButton
+            onSelectStartAndEnd={onSelectStartAndEnd}
+            defaultLabel={t('ExploreScreen.last30Days')}
+          />
         </View>
-        <SectionList
-          showsVerticalScrollIndicator={false}
-          stickySectionHeadersEnabled={false}
-          style={styles.sectionList}
-          contentContainerStyle={{ paddingBottom: 40 }}
-          refreshControl={
-            <RefreshControl refreshing={isLoading} onRefresh={refetch} />
-          }
-          sections={groupedData}
-          renderItem={renderItem}
-          keyExtractor={(item) => JSON.stringify(item)}
-          renderSectionHeader={({ section: { title } }) => (
-            <Text key={title} style={styles.header}>
-              {title}
-            </Text>
-          )}
-          ListFooterComponent={() => {
-            if (newsletters.length === 0) {
-              return undefined;
-            }
-
-            return (
-              <TouchableOpacity
-                style={styles.loadMoreButton}
-                onPress={onEndReached}
-              >
-                {isLoadMore ? (
-                  <ActivityIndicator size="small" color={colors.primary} />
-                ) : (
-                  <Text style={styles.loadMore}>Load more</Text>
-                )}
-              </TouchableOpacity>
-            );
-          }}
-          onEndReachedThreshold={0.5}
-        />
+        <ContentView />
       </View>
       {detailLetter && (
         <NewsLetterDetailScreen
