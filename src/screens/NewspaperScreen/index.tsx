@@ -1,13 +1,22 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { PanResponder, Platform, TouchableOpacity, View } from 'react-native';
 
 import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
+import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import FastImage from 'react-native-fast-image';
 import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { PATH_SCREEN } from 'src/constants/pathName';
+
+import { useGetOccurrences } from 'src/services/newsObjectService';
 
 import {
   NewsObject,
@@ -18,6 +27,7 @@ import {
 import { getPublicationByDeliverableId } from 'src/redux/slices/deliverablesSlice';
 import { AppDispatch, RootState } from 'src/redux/store';
 
+import { GENERAL_DATE_FORMAT } from 'src/utils/dateUtils';
 import { heightScreen, widthScreen } from 'src/utils/systemUtils';
 
 import NewspaperScreenLayout from 'components/Layout/NewspaperScreenLayout';
@@ -35,7 +45,7 @@ const heightContent = heightScreen - 90 - 178 - 50;
 const NewspaperScreen = () => {
   const { t } = useTranslation();
 
-  const { id } = getParams();
+  const { id, sourceId } = getParams();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -60,19 +70,40 @@ const NewspaperScreen = () => {
 
   const clickTimeout = useRef<NodeJS.Timeout | null>(null);
 
+  const [date, setDate] = useState<string>();
+
+  const userId = useSelector<RootState, number>(
+    (state) => state.userStore.user.id,
+  );
+
+  const { data: occurrencesData } = useGetOccurrences({
+    userid: userId,
+    sourceid: sourceId,
+    params: {
+      from: '1990-01-01',
+      to: moment().format(GENERAL_DATE_FORMAT),
+    },
+  });
+
+  const deliverableid = useMemo(() => {
+    return (
+      occurrencesData?.data?.find((it) => it.date === date)?.deliverableId ?? id
+    );
+  }, [occurrencesData, date]);
+
   useEffect(() => {
-    if (id) {
-      dispatch(getPublicationByDeliverableId({ deliverableid: id }));
+    if (deliverableid) {
+      dispatch(getPublicationByDeliverableId({ deliverableid: deliverableid }));
     }
-  }, [id]);
+  }, [deliverableid]);
 
   const publications = useMemo(() => {
     const publicationsExits = publicationsDownloaded?.find(
-      (item) => item.deliverableid === id,
+      (item) => item.deliverableid === deliverableid,
     );
 
     return publicationsExits?.deliverableModel;
-  }, [publicationsDownloaded]);
+  }, [publicationsDownloaded, deliverableid]);
 
   const panResponder = useRef(
     PanResponder.create({
@@ -124,6 +155,10 @@ const NewspaperScreen = () => {
       }, 300);
     }
   };
+
+  const onSelectStartAndEnd = useCallback((start: string, __: string) => {
+    setDate(start);
+  }, []);
 
   const renderPublicationItem = ({ item }) => (
     <ReactNativeZoomableView
@@ -223,6 +258,7 @@ const NewspaperScreen = () => {
       logoUrl={`${publications?.[activeIndex].sourceLogo}`}
       newsObjects={publications?.[activeIndex].newsObjects}
       pageNumber={publications?.[activeIndex].page}
+      onSelectStartAndEnd={onSelectStartAndEnd}
     >
       <FlatList
         horizontal

@@ -108,7 +108,7 @@ const FilterSection = ({
           {} as Record<string, { label: string; value: string[] }>,
         ),
     )
-      .map(([_, { label, value }]) => ({ label, value: value.join(',') }))
+      .map(([__, { label, value }]) => ({ label, value: value.join(',') }))
       .sort((a, b) => a.label.localeCompare(b.label));
 
     return [{ label: 'All', value: undefined }, ...tabValues];

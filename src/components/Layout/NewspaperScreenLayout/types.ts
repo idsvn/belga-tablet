@@ -13,4 +13,5 @@ export interface NewspaperDetailLayoutProps {
   logoUrl?: string;
   newsObjects?: NewsObject[];
   pageNumber?: number;
+  onSelectStartAndEnd: (startDate: string, endDate: string) => void;
 }

@@ -6,6 +6,7 @@ import { QUERY_KEY } from 'src/constants/queryKey';
 
 import { BelgaNewsObjectModel } from 'src/models/belgaNewsObjectModel';
 import { KioskNewsObjectModel } from 'src/models/kioskNewsObjectModel';
+import { OccurrenceModel } from 'src/models/OccurrenceModel';
 import { DeliverableModel } from 'src/models/publicationModel';
 import { QueryParams } from 'src/models/systemModel';
 
@@ -98,6 +99,22 @@ const newsObjectService = {
         throw err;
       });
   },
+
+  getOccurrence: async (
+    userid: number,
+    sourceid: number,
+    params: QueryParams,
+  ): Promise<OccurrenceModel> => {
+    return axiosService()({
+      url: `${API_BASE_URL}/users/${userid}/kiosk/sources/${sourceid}/occurrences`,
+      params,
+      method: 'GET',
+    })
+      .then((res) => res.data)
+      .catch((err) => {
+        throw err;
+      });
+  },
 };
 
 export function useGetBelgaNewsObject({
@@ -170,6 +187,25 @@ export function useGetKioskNewsObject({
     () => newsObjectService.getNewsObject(params),
     {
       enabled,
+    },
+  );
+}
+
+export function useGetOccurrences({
+  userid,
+  sourceid,
+  params,
+}: {
+  userid: number;
+  sourceid?: number;
+  params: QueryParams;
+}) {
+  return useQuery(
+    [QUERY_KEY.NEWS_OBJECT_OCCURRENCES, userid, sourceid, params],
+    async () =>
+      await newsObjectService.getOccurrence(userid, sourceid ?? 0, params),
+    {
+      enabled: !!sourceid,
     },
   );
 }

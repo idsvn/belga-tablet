@@ -31,7 +31,7 @@ const kioskService = {
   },
   getPublicationByDeliverableId: async (
     userId: number,
-    deliverableid: number,
+    { deliverableid }: { deliverableid: number },
   ) => {
     return axiosService()({
       url: `${API_BASE_URL}/users/${userId}${API_KIOSK_URL.GET_PUBLICATION_URL}`,

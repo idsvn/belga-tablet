@@ -1,8 +1,10 @@
 import axios, { AxiosInstance } from 'axios';
 
+import { PATH_SCREEN } from 'src/constants/pathName';
+
 import configEnv from 'src/configs';
 
-import { userSessionManager } from 'App';
+import { replace, userSessionManager } from 'App';
 
 const axiosService = (): AxiosInstance => {
   const accessToken = userSessionManager.getAccessToken();
@@ -32,6 +34,10 @@ const axiosService = (): AxiosInstance => {
       return response;
     },
     (errors) => {
+      if (errors?.response?.status === 401) {
+        userSessionManager.reset();
+        replace(PATH_SCREEN.INTRODUCE_SCREEN);
+      }
       // console.log(
       //   'Error:',
       //   JSON.stringify(

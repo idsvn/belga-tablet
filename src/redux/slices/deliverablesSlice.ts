@@ -63,7 +63,7 @@ export const getPublicationByDeliverableId = createAsyncThunk(
 
       const response = await kioskService.getPublicationByDeliverableId(
         user.id,
-        deliverableid,
+        { deliverableid },
       );
 
       dispatch(

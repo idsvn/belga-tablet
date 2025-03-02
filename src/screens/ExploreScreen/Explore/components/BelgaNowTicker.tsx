@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     width: SCREEN_WIDTH,
     marginHorizontal: -40,
-    marginTop: -20,
+    marginTop: -16,
     marginBottom: 20,
     paddingHorizontal: 40,
     paddingVertical: 14,

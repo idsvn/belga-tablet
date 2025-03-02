@@ -59,9 +59,12 @@ const ArticleList = () => {
               imageUrl={item?.attachments?.[0]?.references?.[0]?.href}
               publishDate={item.publishDate}
               unread={item.unread}
-              onPress={() =>
-                navigate(PATH_SCREEN.NEWSPAPER_SCREEN, { id: item.id })
-              }
+              onPress={() => {
+                navigate(PATH_SCREEN.NEWSPAPER_SCREEN, {
+                  id: item.id,
+                  sourceId: item.sourceId,
+                });
+              }}
             />
           ))}
       </View>

@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   searchView: {
-    width: '80%',
+    flex: 1,
     borderRadius: 10,
     flexDirection: 'row',
     gap: 5,

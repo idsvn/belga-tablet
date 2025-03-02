@@ -18,6 +18,7 @@ const NewspaperScreenLayout = (props: NewspaperDetailLayoutProps) => {
     logoUrl,
     newsObjects = [],
     pageNumber = 0,
+    onSelectStartAndEnd,
   } = props;
 
   const [showSideBar, setShowSidebar] = useState<boolean>(false);
@@ -38,6 +39,7 @@ const NewspaperScreenLayout = (props: NewspaperDetailLayoutProps) => {
           logoUrl={logoUrl}
           showSideBar={showSideBar}
           onShowSideBar={toggleShowSidebar}
+          onSelectStartAndEnd={onSelectStartAndEnd}
         />
         <Sidebar
           showSidebar={showSideBar}

@@ -4,7 +4,7 @@ import { API_BASE_URL } from 'src/constants/apiURL';
 import { QUERY_KEY } from 'src/constants/queryKey';
 
 import { NewsletterDetailModal } from 'src/models/newsletterDetailModal';
-import { OccurrenceModel } from 'src/models/occurenceModel';
+import { OccurrenceModel } from 'src/models/OccurrenceModel';
 import { QueryParams } from 'src/models/systemModel';
 
 import axiosService from './axiosService';
@@ -57,7 +57,7 @@ export function useGetOccurrences({
   params: QueryParams;
 }) {
   return useQuery(
-    [QUERY_KEY.OCCURRENCES, userid, recurringId, params],
+    [QUERY_KEY.NEWS_LETTER_OCCURRENCES, userid, recurringId, params],
     async () =>
       await newsLetterService.getOccurrence(userid, recurringId ?? 0, params),
     {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, TouchableOpacity, View } from 'react-native';
 
 import { useTranslation } from 'react-i18next';
@@ -22,6 +22,7 @@ import FavoritesIcon from 'src/assets/svg/favorites-icon.svg';
 import ShareIcon from 'src/assets/svg/share-transparent-icon.svg';
 import TrashIcon from 'src/assets/svg/trash-icon.svg';
 
+import CalendarButton from 'components/CalendarButton';
 import CheckBox from 'components/Checkbox';
 import LoadingFooter from 'components/customs/LoadingFooter';
 import RefreshControl from 'components/customs/RefreshControl';
@@ -65,6 +66,8 @@ const FavoritesScreen = () => {
 
   const textInputDebounce = useDebounce(textInput, 500);
 
+  const [date, setDate] = useState<{ start: string; end: string }>();
+
   useEffect(() => {
     if (user.id) {
       getTags(user.id);
@@ -79,7 +82,14 @@ const FavoritesScreen = () => {
     refetch,
     isFetchingNextPage,
   } = useInfiniteQuery(
-    [QUERY_KEY.FAVORITES, tagIds, searchPagination, textInputDebounce],
+    [
+      QUERY_KEY.FAVORITES,
+      tagIds,
+      searchPagination,
+      textInputDebounce,
+      date?.start,
+      date?.end,
+    ],
     async ({ pageParam = 0 }) => {
       const params: QueryParams = {
         offset: pageParam * COUNT_DEFAULT,
@@ -91,6 +101,8 @@ const FavoritesScreen = () => {
           QueryParamType.BELGA_COVERAGE,
           QueryParamType.BELGA_PHOTO,
         ],
+        start: date?.start,
+        end: date?.end,
       };
 
       params.tagid = tagIds;
@@ -227,6 +239,10 @@ const FavoritesScreen = () => {
     deleteTagsMutation.mutate(favoritesSelected);
   };
 
+  const onSelectStartAndEnd = useCallback((start: string, end: string) => {
+    setDate({ start, end });
+  }, []);
+
   return (
     <PrimaryLayout>
       <View style={styles.container}>
@@ -248,6 +264,7 @@ const FavoritesScreen = () => {
               <VoiceSvg width={'20'} height={'20'} />
             </TouchableOpacity>
           </View>
+          <CalendarButton onSelectStartAndEnd={onSelectStartAndEnd} />
         </View>
         <TouchableOpacity style={styles.checkboxView} onPress={handleSelectAll}>
           <CheckBox size={15} onPress={handleSelectAll} />

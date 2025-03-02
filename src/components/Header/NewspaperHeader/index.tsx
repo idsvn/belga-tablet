@@ -1,12 +1,15 @@
 import { TouchableOpacity, View } from 'react-native';
 
+import moment from 'moment';
 import FastImage from 'react-native-fast-image';
+
+import { GENERAL_DATE_FORMAT } from 'src/utils/dateUtils';
 
 import BackIcon from 'src/assets/svg/back-icon.svg';
 import CloseIcon from 'src/assets/svg/close-icon.svg';
-import DateGroupIcon from 'src/assets/svg/date-group-icon.svg';
 import MenuIcon from 'src/assets/svg/menu-icon.svg';
 
+import CalendarButton from 'components/CalendarButton';
 import Text from 'components/customs/Text';
 
 import { goBack } from 'App';
@@ -22,6 +25,7 @@ const NewspaperHeader = (props: NewspaperHeaderProps) => {
     showSideBar,
     onShowSideBar,
     onPressBack,
+    onSelectStartAndEnd,
   } = props;
 
   return (
@@ -44,9 +48,12 @@ const NewspaperHeader = (props: NewspaperHeaderProps) => {
       </View>
       <Text style={styles.titleText}>{title}</Text>
       <View style={styles.menuView}>
-        <TouchableOpacity>
-          <DateGroupIcon />
-        </TouchableOpacity>
+        <CalendarButton
+          onSelectStartAndEnd={onSelectStartAndEnd}
+          singleSelect={true}
+          initStartDate={moment().format(GENERAL_DATE_FORMAT)}
+          initEndDate={moment().format(GENERAL_DATE_FORMAT)}
+        />
         <TouchableOpacity onPress={() => onShowSideBar?.()}>
           {showSideBar ? (
             <CloseIcon width={30} height={30} />

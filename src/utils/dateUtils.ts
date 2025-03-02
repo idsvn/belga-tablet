@@ -13,6 +13,8 @@ export const DATE_FORMAT_HHMMDDMMYYYY = 'HH:mm DD/MM/YYYY';
 
 export const DATE_FORMAT_DDMMYYYYHHMM = 'DD/MM/YYYY - HH:mm';
 
+export const GENERAL_DATE_FORMAT = 'YYYY-MM-DD';
+
 export const formatDate = (date: Date | string, format: string): string => {
   return moment(date).format(format);
 };

@@ -6,7 +6,9 @@ export interface OccurrenceModel {
 
 export interface Occurrence {
   date: string;
-  newsletterId: number;
+  newsletterId?: number;
+  publications?: number;
+  deliverableId?: number;
 }
 
 export interface Links {
