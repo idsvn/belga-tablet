@@ -27,10 +27,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 20,
     borderRadius: 10,
+    fontSize: 16,
   },
   charCountText: {
     marginTop: 5,
     fontFamily: theme.fontFamily.semiBold,
+    fontSize: 14,
     color: theme.colors.gray,
   },
   reportButton: {
@@ -48,6 +50,7 @@ const styles = StyleSheet.create({
   reportButtonText: {
     color: theme.colors.textWhite,
     fontWeight: 'bold',
+    fontSize: 16,
   },
   reportButtonIcon: {
     marginLeft: 5,

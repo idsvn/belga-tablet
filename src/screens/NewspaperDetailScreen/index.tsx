@@ -219,7 +219,7 @@ const NewspaperDetailScreen = () => {
             </Text>
             <TouchableOpacity
               style={styles.issueButton}
-              onPress={() => navigate(PATH_SCREEN.REPORT_ISSUE_SCREEN)}
+              onPress={() => navigate(PATH_SCREEN.REPORT_ISSUE_SCREEN, { id })}
             >
               <ReportIcon />
               <Text
