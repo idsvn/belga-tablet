@@ -120,6 +120,31 @@ function App(): React.JSX.Element {
                       tokens.refreshToken &&
                         userSessionManager.setRefreshToken(tokens.refreshToken);
                     }}
+                    onEvent={(event, error) => {
+                      if (event === 'onAuthSuccess') {
+                        console.log('onAuthSuccess');
+                      }
+
+                      if (event === 'onAuthError') {
+                        console.log('onAuthError', error);
+                      }
+
+                      if (event === 'onAuthRefreshSuccess') {
+                        console.log('onAuthRefreshSuccess');
+                      }
+
+                      if (event === 'onAuthRefreshError') {
+                        console.log('onAuthRefreshError', error);
+                      }
+
+                      if (event === 'onTokenExpired') {
+                        console.log('onTokenExpired');
+                      }
+
+                      if (event === 'onAuthLogout') {
+                        console.log('onAuthLogout');
+                      }
+                    }}
                     initOptions={{
                       redirectUri: configEnv.REDIRECT_URL,
                       // if you need to customize "react-native-inappbrowser-reborn" View you can use the following attribute

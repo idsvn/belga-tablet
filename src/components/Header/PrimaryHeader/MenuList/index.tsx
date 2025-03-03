@@ -20,7 +20,7 @@ const iconSize = '28';
 export const MENU_LIST = [
   ExploreMenu.EXPLORE,
   ExploreMenu.BELGA_NOW,
-  ExploreMenu.PUBLICATIONS,
+  // ExploreMenu.PUBLICATIONS,
   ExploreMenu.REALTIME_FEED,
   ExploreMenu.NEWSLETTERS,
   ExploreMenu.SEARCH,

@@ -15,6 +15,7 @@ import Text from 'components/customs/Text';
 import TextInput from 'components/customs/TextInput';
 
 import { MenuIcon } from './MenuList/components/MenuIcon';
+import BelgaNowTicker from 'src/screens/ExploreScreen/Explore/components/BelgaNowTicker';
 
 import theme from 'src/themes';
 
@@ -87,7 +88,7 @@ const PrimaryHeader = () => {
   };
 
   return (
-    <View style={{ position: 'relative' }}>
+    <>
       <View style={styles.container}>
         <View style={styles.wrapperHeader}>
           <HeaderTitle
@@ -109,10 +110,11 @@ const PrimaryHeader = () => {
           )}
         </View>
       </View>
+      {currentExploreMenu === ExploreMenu.EXPLORE && <BelgaNowTicker />}
       {visibleMenuList && (
         <MenuList visible={visibleMenuList} onClose={showMenuList} />
       )}
-    </View>
+    </>
   );
 };
 

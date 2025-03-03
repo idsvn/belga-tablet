@@ -1,11 +1,5 @@
 import { memo } from 'react';
-import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
@@ -20,8 +14,6 @@ import ReloadIconSvg from 'components/svg/ReloadIconSvg';
 import colors from 'src/themes/colors';
 import fontFamily from 'src/themes/fontFamily';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
 const BelgaNowTicker = () => {
   const { t } = useTranslation();
 
@@ -33,7 +25,7 @@ const BelgaNowTicker = () => {
         <View style={styles.redCircle}></View>
         <Text style={styles.liveTitle}>{t('ExploreScreen.liveTitle')}</Text>
       </View>
-      <Text style={styles.titleBanner}>
+      <Text style={styles.titleBanner} numberOfLines={1}>
         Lorem ipsum dolor sit amet, consecteturaaaaaaaaaa...
       </Text>
       <View style={styles.footer}>
@@ -59,10 +51,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: colors.primary,
-    width: SCREEN_WIDTH,
-    marginHorizontal: -40,
-    marginTop: -16,
-    marginBottom: 20,
+    width: '100%',
     paddingHorizontal: 40,
     paddingVertical: 14,
     alignItems: 'center',
@@ -100,6 +89,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: colors.textWhite,
     marginLeft: 12,
+    paddingRight: 12,
   },
   footer: {
     flexDirection: 'row',

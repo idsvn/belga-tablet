@@ -1,15 +1,13 @@
 import { StyleSheet } from 'react-native';
 
-import { heightScreen } from 'src/utils/systemUtils';
-
 import theme from 'src/themes';
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.background,
-    height: heightScreen,
+    height: '100%',
     position: 'absolute',
-    top: 91,
+    top: 90,
     zIndex: 1000,
     left: 0,
     right: 0,

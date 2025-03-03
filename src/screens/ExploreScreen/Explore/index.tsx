@@ -11,8 +11,6 @@ import {
 import { getNewsObject } from 'src/redux/slices/newsObjectSlice';
 import { AppDispatch } from 'src/redux/store';
 
-import BelgaNowTicker from './components/BelgaNowTicker';
-
 import ArticleList from '../ArticleList';
 import LatestPressRelease from '../LatestPressRelease';
 import RealtimeFeed from '../RealtimeFeed';
@@ -33,21 +31,18 @@ export function Explore() {
   };
 
   return (
-    <>
-      <BelgaNowTicker />
-      <ScrollView
-        style={{ flex: 1 }}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
-        }
-      >
-        <View style={{ flex: 1, gap: 80 }}>
-          <ArticleList />
-          <RealtimeFeed />
-          <LatestPressRelease />
-        </View>
-      </ScrollView>
-    </>
+    <ScrollView
+      style={{ flex: 1 }}
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
+      }
+    >
+      <View style={{ flex: 1, gap: 80 }}>
+        <ArticleList />
+        <RealtimeFeed />
+        <LatestPressRelease />
+      </View>
+    </ScrollView>
   );
 }

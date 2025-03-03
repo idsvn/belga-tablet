@@ -49,11 +49,11 @@ const RootStackNavigator = () => {
     if (storedToken && storedRefreshToken && keycloak) {
       keycloak.token = storedToken;
       keycloak.refreshToken = storedRefreshToken;
-      console.log(storedRefreshToken);
       try {
         await keycloak.updateToken(30);
         replace(PATH_SCREEN.MAIN);
       } catch (error) {
+        console.log('Error:', error);
         clearToken();
       }
     } else {
