@@ -65,7 +65,11 @@ const CalendarButton = ({
         <ChevronDownIconSvg width="17" height="20" />
       </TouchableOpacity>
       <>
-        <Modal visible={isCalendarVisible} transparent={true}>
+        <Modal
+          visible={isCalendarVisible}
+          supportedOrientations={['portrait', 'landscape']}
+          transparent={true}
+        >
           <TouchableOpacity style={styles.overlayStyle} onPress={onClose} />
 
           <DateRangePicker
