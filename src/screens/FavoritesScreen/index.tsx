@@ -34,7 +34,7 @@ import PrimaryLayout from 'components/Layout/PrimaryLayout';
 import SearchSvg from 'components/svg/SearchSvg';
 import VoiceSvg from 'components/svg/VoiceSvg';
 
-import FavoritesItem from './components/FavoritesItem';
+import SearchItem from './components/FavoritesItem';
 
 import { navigate, queryClient } from 'App';
 
@@ -286,7 +286,7 @@ const FavoritesScreen = () => {
           const checked = favoritesSelected.includes(item.uuid);
 
           return (
-            <FavoritesItem
+            <SearchItem
               {...item}
               checked={checked}
               onPress={() => handleNavigate(item.uuid)}

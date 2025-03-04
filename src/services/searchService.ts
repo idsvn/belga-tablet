@@ -6,11 +6,37 @@ import { QUERY_KEY } from 'src/constants/queryKey';
 import { MediumTypeGroupModel } from 'src/models/mediumTypeGroupModel';
 import { SavedSearchModel } from 'src/models/savedSearchModel';
 import { SearchHistoryModel } from 'src/models/searchHistoryModel';
+import { SearchNewsObjectModel } from 'src/models/searchNewsObjectModel';
 import { SourceGroupModel } from 'src/models/sourceGroupModel';
 import { SourceModel } from 'src/models/sourceModel';
 import { QueryParams } from 'src/models/systemModel';
 
 import axiosService from './axiosService';
+
+// Định nghĩa type cho payload của API newsobjects
+interface NewsObjectsParams {
+  searchtext?: string;
+  count?: number;
+  offset?: number;
+  highlight?: boolean;
+  snippets?: boolean;
+  language?: string[];
+  mediumtypegroup?: string[];
+  edition?: string[];
+  sourceid?: string[];
+  sourcegroupid?: string[];
+  subsourceid?: string[];
+  topicids?: string[];
+  start?: string; // Format: "YYYY-MM-DDTHH:mm:ss"
+  end?: string; // Format: "YYYY-MM-DDTHH:mm:ss"
+  periodType?: string;
+  keyword?: string[];
+  author?: string[];
+  publisher?: string[];
+  exactquery?: boolean;
+  collapseduplicates?: boolean;
+  order?: string[];
+}
 
 interface SavedSearchParams {
   order?: string;
@@ -75,6 +101,22 @@ const searchService = {
         throw err;
       });
   },
+  getNewsObjects: async (
+    params: NewsObjectsParams,
+  ): Promise<SearchNewsObjectModel> => {
+    return axiosService()({
+      url: `${API_BASE_URL}/newsobjects`,
+      method: 'POST',
+      data: params,
+      headers: {
+        'x-belga-context': 'SEARCH',
+      },
+    })
+      .then((res) => res.data)
+      .catch((err) => {
+        throw err;
+      });
+  },
 };
 
 export function useGetSavedSearch(userid: number, params: SavedSearchParams) {
@@ -109,5 +151,38 @@ export function useGetMediumTypeGroups() {
   return useQuery(
     [QUERY_KEY.MEDIUM_TYPE_GROUPS],
     async () => await searchService.getMediumTypeGroups(),
+  );
+}
+
+export function useGetNewsObjects(params: NewsObjectsParams) {
+  return useQuery(
+    [
+      QUERY_KEY.NEWS_OBJECTS,
+      params.searchtext,
+      params.count,
+      params.offset,
+      params.highlight,
+      params.snippets,
+      params.language,
+      params.mediumtypegroup,
+      params.edition,
+      params.sourceid,
+      params.sourcegroupid,
+      params.subsourceid,
+      params.topicids,
+      params.start,
+      params.end,
+      params.periodType,
+      params.keyword,
+      params.author,
+      params.publisher,
+      params.exactquery,
+      params.collapseduplicates,
+      params.order,
+    ],
+    async () => await searchService.getNewsObjects(params),
+    {
+      enabled: !!params.searchtext,
+    },
   );
 }

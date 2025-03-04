@@ -11,6 +11,7 @@ import BelgaNow from './BelgaNow';
 import { Explore } from './Explore';
 import { NewsLettersPage } from './Newsletters';
 import { RealTimeFeedPage } from './RealtimeFeed/RealTimeFeedPage';
+import { SearchPage } from './Search';
 
 import styles from './styles';
 
@@ -36,6 +37,8 @@ const ExplorePage = memo(() => {
       return <RealTimeFeedPage />;
     case ExploreMenu.NEWSLETTERS:
       return <NewsLettersPage />;
+    case ExploreMenu.SEARCH:
+      return <SearchPage />;
 
     default:
       return <Explore />;

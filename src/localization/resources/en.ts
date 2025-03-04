@@ -48,6 +48,10 @@ const localizationString = {
       newsLetter: 'Newsletters',
       newsLettersDetailSearchPlaceHolder: 'Search in this newsletter',
       last30Days: 'Last 30 days',
+      search: 'Search',
+      last24Hours: 'Last 24 hours',
+      savedSearch: 'SAVED SEARCHES',
+      previousSearch: 'PREVIOUS SEARCHES',
     },
     NewspaperScreen: {
       pageText: 'Page',
