@@ -1,4 +1,5 @@
 import { MediumTypeGroup } from 'src/models/mediumTypeGroupModel';
+import { SourceGroup } from 'src/models/sourceGroupModel';
 
 import { FilterCategory } from './components/FilterModal';
 
@@ -15,5 +16,17 @@ export const convertMediumTypeToCategories = (
         label: item.name,
         value: item.id,
       })),
+  };
+};
+
+export const convertSourceGroupToCategories = (
+  data: SourceGroup[],
+): FilterCategory => {
+  return {
+    title: 'Sources',
+    options: data.map((item) => ({
+      label: item.name,
+      value: item.id,
+    })),
   };
 };

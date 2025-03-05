@@ -11,6 +11,7 @@ import { PATH_SCREEN } from 'src/constants/pathName';
 import {
   useGetMediumTypeGroups,
   useGetNewsObjects,
+  useGetSourcesGroup,
 } from 'src/services/searchService';
 
 import { NewsObject } from 'src/models/searchNewsObjectModel';
@@ -91,6 +92,8 @@ export const SearchPage = memo(() => {
   });
 
   const { data: mediumtypegroupData } = useGetMediumTypeGroups();
+
+  const { data: sourceGroupData } = useGetSourcesGroup();
 
   useEffect(() => {
     if (data?.data) {
