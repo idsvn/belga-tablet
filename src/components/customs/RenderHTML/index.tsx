@@ -55,11 +55,16 @@ const RenderHTMLCustom: React.FC<RenderHTMLCustomProps> = ({
           lineHeight: fontSize * 1.4,
           textDecorationLine: 'underline',
         },
+        em: {
+          backgroundColor: theme.colors.lightBlue200,
+          fontFamily: theme.fontFamily.bold,
+          color: theme.colors.primary,
+        },
       }),
     [fontSize],
   );
 
-  const renderNode = (node, index, siblings, parent, defaultRenderer) => {
+  const renderNode = (node, index, siblings, parent, __) => {
     if (node.name === 'strong' && parent.name === 'a') {
       return (
         <Text key={index} style={styles.aStrong}>

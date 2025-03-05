@@ -9,10 +9,13 @@ export const LoadingView = () => {
   return (
     <SkeletonPlaceholder>
       <View style={styles.container}>
+        <View style={styles.timePlaceholder} />
+
         <View style={styles.textContainer}>
           <View style={styles.shortText} />
-          <View style={styles.shortText} />
-          <View style={styles.shortText} />
+          <View style={styles.mediumText} />
+          <View style={styles.veryLongText} />
+          <View style={styles.longText} />
         </View>
       </View>
     </SkeletonPlaceholder>
@@ -38,8 +41,6 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
   },
   shortText: {
     marginLeft: 10,
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const NewsLetterLoadingView = () => {
+export const SearchLoadingView = () => {
   return (
     <View style={{ flex: 1, paddingTop: 20 }}>
       <LoadingView />

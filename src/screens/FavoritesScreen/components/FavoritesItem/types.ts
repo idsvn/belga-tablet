@@ -11,4 +11,5 @@ export interface FavoritesItemProps {
   checked?: boolean;
   onPress?: () => void;
   onPressCheckBox?: () => void;
+  onPressShare?: () => void;
 }

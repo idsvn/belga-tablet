@@ -31,6 +31,7 @@ const FavoritesItem = (props: FavoritesItemProps) => {
     checked,
     onPress,
     onPressCheckBox,
+    onPressShare,
   } = props;
 
   return (
@@ -56,7 +57,7 @@ const FavoritesItem = (props: FavoritesItemProps) => {
               <Text style={styles.subTitleText}>{subSource}</Text>
             </View>
             <View style={styles.buttonGroup}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={onPressShare}>
                 <ShareIcon />
               </TouchableOpacity>
             </View>

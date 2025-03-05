@@ -291,6 +291,13 @@ const FavoritesScreen = () => {
               checked={checked}
               onPress={() => handleNavigate(item.uuid)}
               onPressCheckBox={() => handlePressCheckBox(item.uuid)}
+              onPressShare={() => {
+                navigate(PATH_SCREEN.SHARE_SCREEN, {
+                  id: item.uuid,
+                  source: item?.source,
+                  title: item?.title,
+                });
+              }}
             />
           );
         }}

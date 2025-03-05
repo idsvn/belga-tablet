@@ -1,7 +1,7 @@
 import { memo, useCallback } from 'react';
 
 import { useIsFocused } from '@react-navigation/native';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, RefreshControl } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 
 import { useGetBelgaNewsObject } from 'src/services/newsObjectService';
@@ -34,7 +34,7 @@ const BelgaListItem = ({
 
   const isFocused = useIsFocused();
 
-  const { data, isLoading } = useGetBelgaNewsObject({
+  const { data, isLoading, refetch } = useGetBelgaNewsObject({
     userId,
     count: 20,
     offset: 0,
@@ -57,6 +57,9 @@ const BelgaListItem = ({
 
   return (
     <FlatList
+      refreshControl={
+        <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+      }
       showsVerticalScrollIndicator={false}
       data={data.data}
       renderItem={renderItem}

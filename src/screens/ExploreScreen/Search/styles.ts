@@ -127,6 +127,24 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderRadius: 10,
   },
+  listSearchHeaderContainer: {},
+  resultFoundText: {
+    fontSize: 16,
+    fontFamily: fontFamily.bold,
+    color: colors.gray,
+    paddingBottom: 8,
+  },
+  selectAllButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 8,
+  },
+  selectAllText: {
+    fontSize: 13,
+    fontFamily: fontFamily.bold,
+    color: colors.primary,
+  },
 });
 
 export default styles;

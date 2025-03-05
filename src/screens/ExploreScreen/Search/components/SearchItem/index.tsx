@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import FastImage from 'react-native-fast-image';
@@ -12,6 +13,7 @@ import NetworkIcon from 'src/assets/svg/network-icon.svg';
 import ShareIcon from 'src/assets/svg/share-icon.svg';
 
 import CheckBox from 'components/Checkbox';
+import RenderHTML from 'components/customs/RenderHTML';
 import Text from 'components/customs/Text';
 
 import { FavoritesItemProps } from './types';
@@ -31,6 +33,7 @@ const SearchItem = (props: FavoritesItemProps) => {
     checked,
     onPress,
     onPressCheckBox,
+    onPressShare,
   } = props;
 
   return (
@@ -56,14 +59,14 @@ const SearchItem = (props: FavoritesItemProps) => {
               <Text style={styles.subTitleText}>{subSource}</Text>
             </View>
             <View style={styles.buttonGroup}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={onPressShare}>
                 <ShareIcon />
               </TouchableOpacity>
             </View>
           </View>
           <View style={styles.bodyView}>
             <Text style={styles.titleText}>{title || ''}</Text>
-            <Text style={styles.leadText}>{body || ''}</Text>
+            <RenderHTML value={`<p>${body || ''}</p>`} fontSize={10} />
           </View>
         </View>
         <View style={styles.footerView}>
@@ -79,4 +82,4 @@ const SearchItem = (props: FavoritesItemProps) => {
   );
 };
 
-export default SearchItem;
+export default memo(SearchItem);

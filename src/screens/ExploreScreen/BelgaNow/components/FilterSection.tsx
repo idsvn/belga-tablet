@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native-gesture-handler';
 import i18n from 'src/localization';
 
+import { LANGUAGES } from 'src/constants';
+
 import { useBelgaContentTypes } from 'src/services/belgaService';
 import { useGetTopics } from 'src/services/topicService';
 
@@ -25,13 +27,6 @@ interface FilterSectionProps {
   onSelectSubSourceIds: (value?: string) => void;
   onSearchChanged: (search: string) => void;
 }
-
-const LANGUAGES = [
-  { label: 'Dutch', value: 'NL' },
-  { label: 'French', value: 'FR' },
-  { label: 'German', value: 'DE' },
-  { label: 'English', value: 'EN' },
-];
 
 const FilterSection = ({
   onSelectTopicIds,
