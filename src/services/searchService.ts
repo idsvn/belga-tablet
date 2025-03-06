@@ -13,7 +13,6 @@ import { QueryParams } from 'src/models/systemModel';
 
 import axiosService from './axiosService';
 
-// Định nghĩa type cho payload của API newsobjects
 interface NewsObjectsParams {
   searchtext?: string;
   count?: number;
@@ -36,6 +35,7 @@ interface NewsObjectsParams {
   exactquery?: boolean;
   collapseduplicates?: boolean;
   order?: string[];
+  searchMode?: string;
 }
 
 interface SavedSearchParams {
@@ -179,6 +179,7 @@ export function useGetNewsObjects(params: NewsObjectsParams) {
       params.exactquery,
       params.collapseduplicates,
       params.order,
+      params.searchMode,
     ],
     async () => await searchService.getNewsObjects(params),
     {

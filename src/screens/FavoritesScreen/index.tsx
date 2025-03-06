@@ -267,7 +267,11 @@ const FavoritesScreen = () => {
           <CalendarButton onSelectStartAndEnd={onSelectStartAndEnd} />
         </View>
         <TouchableOpacity style={styles.checkboxView} onPress={handleSelectAll}>
-          <CheckBox size={15} onPress={handleSelectAll} />
+          <CheckBox
+            size={15}
+            onPress={handleSelectAll}
+            checked={favoritesSelected.length === favorites.length}
+          />
           <Text>{t('FavoritesScreen.allText')}</Text>
         </TouchableOpacity>
       </View>

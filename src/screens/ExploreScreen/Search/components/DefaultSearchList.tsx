@@ -1,6 +1,8 @@
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useState } from 'react';
 import {
+  FlatList,
   ImageBackground,
+  RefreshControl,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -9,7 +11,6 @@ import {
 
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
-import { FlatList } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 
 import {
@@ -17,35 +18,50 @@ import {
   useGetSearchHistory,
 } from 'src/services/searchService';
 
-import { SavedSearch } from 'src/models/savedSearchModel';
+import { QueryObject, SavedSearch } from 'src/models/savedSearchModel';
 import { SearchHistory } from 'src/models/searchHistoryModel';
 
 import { RootState } from 'src/redux/store';
 
+import ScrollView from 'components/customs/ScrollView';
 import SearchIconSvg from 'components/svg/SearchIconSvg';
 
 import colors from 'src/themes/colors';
 import fontFamily from 'src/themes/fontFamily';
 
-const DefaultSearchList = () => {
+const DefaultSearchList = ({
+  onPressSavedSearch,
+}: {
+  onPressSavedSearch: (queryObject: QueryObject) => void;
+}) => {
   const { t } = useTranslation();
+
+  const [refreshing, setRefreshing] = useState(false);
 
   const userId = useSelector<RootState, number>(
     (state) => state.userStore.user.id,
   );
 
-  const { data: savedSearchData } = useGetSavedSearch(userId, {
-    order: '-CREATEDATE',
-  });
+  const { data: savedSearchData, refetch: refetchSavedSearch } =
+    useGetSavedSearch(userId, {
+      order: '-CREATEDATE',
+    });
 
-  const { data: previousSearchData } = useGetSearchHistory(userId, {
-    count: 5,
-  });
+  const { data: previousSearchData, refetch: refetchSearchHistory } =
+    useGetSearchHistory(userId, {
+      count: 5,
+    });
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await Promise.all([refetchSavedSearch(), refetchSearchHistory()]);
+    setRefreshing(false);
+  };
 
   const renderSavedSearchItem = useCallback(
     ({ item }: { item: SavedSearch }) => {
       return (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => onPressSavedSearch(item.queryObject)}>
           <ImageBackground
             source={{ uri: item.image }}
             style={styles.savedSearchItem}
@@ -60,27 +76,13 @@ const DefaultSearchList = () => {
     [],
   );
 
-  const renderSearchHistoryItem = useCallback(
-    ({ item }: { item: SearchHistory }) => {
-      return (
-        <TouchableOpacity style={styles.searchHistoryItem}>
-          <SearchIconSvg color={colors.gray100} />
-          <View>
-            <Text style={styles.searchHistoryTitle}>
-              {item.queryObject.searchText}
-            </Text>
-            <Text style={styles.searchHistoryDate}>
-              {moment(item.searchDate).format('DD/MM/YYYY - HH:mm')}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      );
-    },
-    [],
-  );
-
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={styles.sectionContainer}>
         <Text style={styles.sectionTitle}>
           {t('ExploreScreen.savedSearch')}
@@ -99,11 +101,26 @@ const DefaultSearchList = () => {
         </Text>
         <View style={styles.line}></View>
       </View>
-      <FlatList
-        data={previousSearchData?.data}
-        renderItem={renderSearchHistoryItem}
-      />
-    </View>
+      <View style={{ gap: 10, marginLeft: 10 }}>
+        {previousSearchData?.data?.map((item: SearchHistory) => (
+          <TouchableOpacity
+            key={item.id}
+            style={styles.searchHistoryItem}
+            onPress={() => onPressSavedSearch(item.queryObject)}
+          >
+            <SearchIconSvg color={colors.gray100} />
+            <View>
+              <Text style={styles.searchHistoryTitle}>
+                {item.queryObject.searchText}
+              </Text>
+              <Text style={styles.searchHistoryDate}>
+                {moment(item.searchDate).format('DD/MM/YYYY - HH:mm')}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </ScrollView>
   );
 };
 
@@ -129,10 +146,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.gray100,
   },
+  savedSearchContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
   savedSearchItem: {
     height: 100,
     width: 200,
-    marginRight: 30,
+    marginRight: 10,
     borderRadius: 10,
     overflow: 'hidden',
     padding: 12,
@@ -152,7 +174,6 @@ const styles = StyleSheet.create({
   searchHistoryItem: {
     flexDirection: 'row',
     gap: 15,
-    paddingVertical: 10,
     alignItems: 'center',
   },
   searchHistoryTitle: {

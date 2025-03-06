@@ -145,6 +145,37 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.bold,
     color: colors.primary,
   },
+  sortContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 5,
+  },
+  sortDropdown: {
+    width: 200,
+    height: 40,
+    backgroundColor: 'white',
+    paddingHorizontal: 10,
+  },
+  sortPlaceholderText: {
+    fontSize: 14,
+    color: colors.gray100,
+    fontFamily: fontFamily.regular,
+  },
+  sortSelectedText: {
+    fontSize: 14,
+    color: colors.black, // Hoặc colors.darkBlue200 để đậm hơn
+    fontFamily: fontFamily.bold,
+  },
+  sortItemText: {
+    fontSize: 14,
+    color: colors.gray100,
+    fontFamily: fontFamily.regular,
+    paddingVertical: 8,
+  },
+  dropdownItem: {
+    padding: 10,
+  },
 });
 
 export default styles;
