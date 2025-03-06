@@ -50,7 +50,10 @@ export const navigate = (name: string, params?: any) => {
 };
 
 export const replace = (name: string, params?: any) => {
-  if (navigationRef.isReady()) {
+  if (
+    navigationRef.isReady() &&
+    navigationRef.current?.getCurrentRoute()?.name !== name
+  ) {
     navigationRef.current?.dispatch(StackActions.replace(name, params));
   }
 };

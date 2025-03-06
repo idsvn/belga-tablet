@@ -1,10 +1,10 @@
 import { memo, useCallback, useRef, useState } from 'react';
 import React from 'react';
 import {
-  Dimensions,
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
 
@@ -18,8 +18,6 @@ import ArrowRightIconSvg from 'components/svg/ArrowRightIconSvg';
 import colors from 'src/themes/colors';
 import fontFamily from 'src/themes/fontFamily';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
 const NewsLetterDetailItemList = ({
   items,
   scrollViewRef,
@@ -30,6 +28,8 @@ const NewsLetterDetailItemList = ({
   const [imageHeights, setImageHeights] = useState<{ [key: string]: number }>(
     {},
   );
+
+  const SCREEN_WIDTH = useWindowDimensions().width;
 
   const itemRefs = useRef<(View | null)[]>([]); // Lưu ref cho từng item
 
@@ -61,7 +61,13 @@ const NewsLetterDetailItemList = ({
           {!!title && <Text style={styles.itemTitle}>{item.title}</Text>}
           {!!imageUrl && (
             <FastImage
-              style={[styles.itemImg, { height: imageHeights[itemKey] || 200 }]}
+              style={[
+                styles.itemImg,
+                {
+                  height: imageHeights[itemKey] || 200,
+                  width: SCREEN_WIDTH * 0.9,
+                },
+              ]}
               source={{ uri: imageUrl }}
               resizeMode={FastImage.resizeMode.contain}
               onLoad={handleImageLoad}
@@ -77,7 +83,7 @@ const NewsLetterDetailItemList = ({
         </View>
       );
     },
-    [imageHeights],
+    [imageHeights, SCREEN_WIDTH],
   );
 
   const handleSectionPress = (index: number) => {
@@ -132,7 +138,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   itemImg: {
-    width: SCREEN_WIDTH * 0.9,
     marginVertical: 20,
   },
   htmlContainer: {

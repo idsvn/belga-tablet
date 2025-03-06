@@ -15,6 +15,7 @@ import { useSendShare } from 'src/services/shareService';
 
 import { RootState } from 'src/redux/store';
 
+import ScrollView from 'components/customs/ScrollView';
 import Text from 'components/customs/Text';
 import NewspaperDetailHeader from 'components/Header/NewspaperDetailHeader';
 import PrimaryLayout from 'components/Layout/PrimaryLayout';
@@ -85,7 +86,7 @@ const ShareScreen = () => {
     <PrimaryLayout
       Header={<NewspaperDetailHeader enableRightContent={false} />}
     >
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <Text style={styles.headerText}>
           {t('ShareScreen.shareThisArticle')}
         </Text>
@@ -163,7 +164,7 @@ const ShareScreen = () => {
         >
           <Text style={styles.reportButtonText}>SEND</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </PrimaryLayout>
   );
 };

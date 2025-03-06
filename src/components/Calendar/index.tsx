@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { useTranslation } from 'react-i18next';
@@ -135,20 +135,35 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
     }
   };
 
-  const onQuickButtonPress: OnPressQuickSelectType = useCallback(
-    ({ startDate, endDate, label }) => {
-      if (startDate) {
-        setDisplayStartDate(startDate.dateString);
-      }
+  const onQuickButtonPress: OnPressQuickSelectType = ({
+    startDate,
+    endDate,
+    label,
+  }) => {
+    if (startDate) {
+      setStartDate(startDate.dateString);
+    }
 
-      if (endDate) {
-        setDisplayEndDate(endDate.dateString);
-      }
+    if (endDate) {
+      setEndDate(endDate.dateString);
+    }
 
-      setSelectedQuickTap(label);
-    },
-    [],
-  );
+    setSelectedQuickTap(label);
+    if (
+      startDate &&
+      endDate &&
+      (startDate.dateString !== initialStartDate ||
+        endDate.dateString !== initialEndDate)
+    ) {
+      onDatesChange?.({
+        startDate: displayStartDate,
+        endDate: displayEndDate,
+        label: t(label),
+      });
+    }
+
+    onClose?.();
+  };
 
   const handleApply = () => {
     if (displayStartDate) {

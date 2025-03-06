@@ -75,6 +75,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   return (
     <Modal
       visible={visible}
+      supportedOrientations={['portrait', 'landscape']}
       transparent={true}
       animationType="slide"
       onRequestClose={handleClose}
