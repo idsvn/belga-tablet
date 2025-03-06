@@ -1,13 +1,11 @@
-import { memo } from 'react';
+import React, { memo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import FastImage from 'react-native-fast-image';
 
-import {
-  DATE_FORMAT_DDMMYYYY,
-  DATE_FORMAT_HHMM,
-  formatDate,
-} from 'src/utils/dateUtils';
+import { useUpdateTags } from 'src/hooks/useUpdateTags';
+
+import { formatTimeAgo } from 'src/utils/dateUtils';
 
 import NetworkIcon from 'src/assets/svg/network-icon.svg';
 import ShareIcon from 'src/assets/svg/share-icon.svg';
@@ -15,6 +13,9 @@ import ShareIcon from 'src/assets/svg/share-icon.svg';
 import CheckBox from 'components/Checkbox';
 import RenderHTML from 'components/customs/RenderHTML';
 import Text from 'components/customs/Text';
+import FavoritesActiveSvg from 'components/svg/FavoritesActiveSvg';
+
+import colors from 'src/themes/colors';
 
 import { FavoritesItemProps } from './types';
 
@@ -34,10 +35,28 @@ const SearchItem = (props: FavoritesItemProps) => {
     onPress,
     onPressCheckBox,
     onPressShare,
+    tags,
+    uuid,
   } = props;
 
+  const { isFavorite, onUpdateFavorite } = useUpdateTags({
+    tags: tags || [],
+    id: uuid ?? '',
+  });
+
+  const onFavorite = () => {
+    if (!uuid) return;
+    onUpdateFavorite();
+  };
+
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity
+      style={[
+        styles.container,
+        { borderColor: checked ? colors.primary : colors.gray400 },
+      ]}
+      onPress={onPress}
+    >
       <View style={styles.logoView}>
         <FastImage
           source={{ uri: sourceLogo }}
@@ -59,6 +78,14 @@ const SearchItem = (props: FavoritesItemProps) => {
               <Text style={styles.subTitleText}>{subSource}</Text>
             </View>
             <View style={styles.buttonGroup}>
+              <TouchableOpacity onPress={onFavorite}>
+                <FavoritesActiveSvg
+                  active={isFavorite}
+                  activeColor={colors.gray}
+                  width={'20'}
+                  height={'20'}
+                />
+              </TouchableOpacity>
               <TouchableOpacity onPress={onPressShare}>
                 <ShareIcon />
               </TouchableOpacity>
@@ -72,7 +99,7 @@ const SearchItem = (props: FavoritesItemProps) => {
         <View style={styles.footerView}>
           {publishDate ? (
             <Text style={styles.footerText}>
-              {`${formatDate(new Date(publishDate), DATE_FORMAT_DDMMYYYY) || ''} - ${page ? `Page ${page}` : `${formatDate(new Date(publishDate), DATE_FORMAT_HHMM)}`}`}
+              {formatTimeAgo(new Date(publishDate))}
             </Text>
           ) : null}
           <Text style={styles.footerText}>{`${wordCount} words`}</Text>

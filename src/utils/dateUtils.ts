@@ -251,3 +251,21 @@ export const timeAgo = (publishDate: string) => {
     return `${diffInDays} years ago`;
   }
 };
+
+export const formatTimeAgo = (date: Date): string => {
+  const now = moment();
+
+  const diffMinutes = now.diff(moment(date), 'minutes');
+
+  const diffHours = now.diff(moment(date), 'hours');
+
+  const diffDays = now.diff(moment(date), 'days');
+
+  if (diffMinutes < 60) {
+    return `${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''} ago`;
+  } else if (diffHours < 24) {
+    return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+  } else {
+    return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+  }
+};

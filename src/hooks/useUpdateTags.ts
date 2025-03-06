@@ -1,13 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { useMutation } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import tagService from 'src/services/tagService';
 
 import { QueryParamType } from 'src/models/systemModel';
 import { TagModel } from 'src/models/tagModel';
 
+import {
+  addSavedArticle,
+  removeSavedArticle,
+} from 'src/redux/slices/tagsSlice';
 import { RootState } from 'src/redux/store';
 
 import { globalLoading } from 'components/GlobalLoading';
@@ -18,19 +22,29 @@ interface UseUpdateTagsProps {
 }
 
 export const useUpdateTags = ({ tags, id }: UseUpdateTagsProps) => {
-  const [isFavorite, setIsFavorites] = useState<boolean>(false);
+  const isFavorite = useSelector<RootState, boolean>((state) =>
+    state.tagStore.savedArticle.includes(id),
+  );
+
+  const dispatch = useDispatch();
 
   const tagsSavedNews = useSelector<RootState, TagModel[]>(
     (state) => state.tagStore.tags,
   );
 
+  const updateFavorite = (addToFavorite: boolean) => {
+    dispatch(addToFavorite ? addSavedArticle(id) : removeSavedArticle(id));
+  };
+
   useEffect(() => {
-    setIsFavorites(
-      tags.some(
-        (tag) => (tag.type as QueryParamType) === QueryParamType.SAVED_NEWS,
-      ),
+    const isFavoriteFromTags = tags.some(
+      (tag) => (tag.type as QueryParamType) === QueryParamType.SAVED_NEWS,
     );
-  }, [tags]);
+
+    if (isFavoriteFromTags !== isFavorite) {
+      updateFavorite(isFavoriteFromTags);
+    }
+  }, [JSON.stringify(tags)]);
 
   const { mutate } = useMutation({
     mutationFn: ({ tagId, data }: { tagId: string; data: any }) =>
@@ -46,11 +60,13 @@ export const useUpdateTags = ({ tags, id }: UseUpdateTagsProps) => {
     mutate(
       { tagId: id, data: isFavorite ? [] : tagIds },
       {
-        onSuccess: () => setIsFavorites((prev) => !prev),
+        onSuccess: () => {
+          updateFavorite(!isFavorite);
+        },
         onSettled: () => globalLoading.hide(),
       },
     );
   };
 
-  return { isFavorite, onUpdateFavorite };
+  return { isFavorite: isFavorite, onUpdateFavorite };
 };

@@ -1,3 +1,5 @@
+import { TagModel } from 'src/models/tagModel';
+
 export interface FavoritesItemProps {
   title?: string;
   source?: string;
@@ -9,6 +11,8 @@ export interface FavoritesItemProps {
   publishDate?: string;
   page?: string;
   checked?: boolean;
+  tags?: TagModel[];
+  uuid?: string;
   onPress?: () => void;
   onPressCheckBox?: () => void;
   onPressShare?: () => void;

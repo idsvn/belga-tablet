@@ -152,7 +152,13 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   sortDropdown: {
-    width: 200,
+    width: 180,
+    height: 40,
+    backgroundColor: 'white',
+    paddingHorizontal: 10,
+  },
+  saveAsDropdown: {
+    width: 120,
     height: 40,
     backgroundColor: 'white',
     paddingHorizontal: 10,

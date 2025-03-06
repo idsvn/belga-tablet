@@ -1,10 +1,11 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { TextInput, TouchableOpacity, View } from 'react-native';
+import { Text } from 'react-native';
 
 import uniq from 'lodash/uniq';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
-// Thêm Dropdown component
 import useDebounce from 'src/hooks/useDebounce';
 
 import { COUNTRIES, LANGUAGES } from 'src/constants';
@@ -18,6 +19,10 @@ import {
 } from 'src/services/searchService';
 
 import { NewsObject } from 'src/models/searchNewsObjectModel';
+
+import { RootState } from 'src/redux/store';
+
+import TrashIcon from 'src/assets/svg/trash-icon.svg';
 
 import CalendarButton from 'components/CalendarButton';
 import CloseIconSvg from 'components/svg/CloseIconSvg';
@@ -93,6 +98,10 @@ export const SearchPage = memo(() => {
     (NewsObject & { checked?: boolean })[]
   >([]);
 
+  const numberOfSelected = useMemo(() => {
+    return newsObjects.filter((it) => it.checked).length;
+  }, [newsObjects]);
+
   const [sortOrder, setSortOrder] = useState(SORT_OPTIONS[0]);
 
   const [date, setDate] = useState(() => {
@@ -141,9 +150,13 @@ export const SearchPage = memo(() => {
     return { language, sourceid, sourcegroupid, mediumtypegroup };
   }, [selectedFilter, sourceData]);
 
+  const paginationCount = useSelector<RootState, number>(
+    (state) => state.systemStore.paginationCount,
+  );
+
   const { data, isLoading, refetch } = useGetNewsObjects({
     searchtext: debounceSearchText,
-    count: 20,
+    count: paginationCount,
     searchMode: selectedSearchMode,
     offset: 0,
     highlight: true,
@@ -177,7 +190,7 @@ export const SearchPage = memo(() => {
 
   useEffect(() => {
     refetch();
-  }, [selectedFilter, sortOrder, refetch]); // Thêm sortOrder vào dependency để refetch khi thay đổi
+  }, [selectedFilter, sortOrder, refetch]);
 
   const onSearchChanged = useCallback((text) => {
     setSearchText(text);
@@ -199,6 +212,17 @@ export const SearchPage = memo(() => {
             id: item.uuid,
             source: item?.source,
             title: item?.title,
+          });
+        }}
+        onPressCheckBox={() => {
+          setNewsObjects((prev) => {
+            return prev.map((news) => {
+              if (news.uuid === item.uuid) {
+                return { ...news, checked: !news.checked };
+              }
+
+              return news;
+            });
           });
         }}
       />
@@ -231,6 +255,14 @@ export const SearchPage = memo(() => {
       Country: queryObject.country,
       'Newsbrands groups': queryObject.sourcegroupid,
     });
+  }, []);
+
+  const handleSelectAll = useCallback(() => {
+    setNewsObjects((prev) => prev.map((item) => ({ ...item, checked: true })));
+  }, []);
+
+  const handleDeleteAll = useCallback(() => {
+    setNewsObjects((prev) => prev.map((item) => ({ ...item, checked: false })));
   }, []);
 
   return (
@@ -280,11 +312,12 @@ export const SearchPage = memo(() => {
             renderItem={renderItem}
             setSortOrder={setSortOrder}
             sortOrder={sortOrder}
-            onSelectAll={() => {
-              setNewsObjects((prev) =>
-                prev.map((item) => ({ ...item, checked: !item.checked })),
-              );
-            }}
+            onSelectAll={
+              numberOfSelected === newsObjects.length
+                ? handleDeleteAll
+                : handleSelectAll
+            }
+            isCheckedAll={numberOfSelected === newsObjects.length}
           />
         ) : (
           <DefaultSearchList onPressSavedSearch={handleSavedSearchPress} />
@@ -297,6 +330,51 @@ export const SearchPage = memo(() => {
         setSelections={setSelectedFilter}
         categories={categories}
       />
+      {numberOfSelected > 0 ? (
+        <View
+          style={{
+            backgroundColor: colors.background,
+          }}
+        >
+          <View
+            style={{
+              alignItems: 'center',
+              alignSelf: 'center',
+              width: '80%',
+              backgroundColor: colors.primary,
+              paddingVertical: 20,
+              borderTopRightRadius: 10,
+              borderTopLeftRadius: 10,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingHorizontal: 40,
+            }}
+          >
+            <View style={{ flexDirection: 'row', gap: 5 }}>
+              <Text
+                style={{ color: '#ffffff', fontWeight: 'bold' }}
+              >{`${numberOfSelected || 0} ${t('FavoritesScreen.itemSelectedText')}`}</Text>
+              {numberOfSelected && (
+                <TouchableOpacity onPress={handleSelectAll}>
+                  <Text style={{ color: '#ffffff', fontSize: 12 }}>
+                    {t('FavoritesScreen.clearSelectionText')}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            <View style={{ flexDirection: 'row', gap: 3 }}>
+              {/* <TouchableOpacity>
+                <ShareIcon width={25} height={20} />
+              </TouchableOpacity> */}
+              <TouchableOpacity onPress={handleDeleteAll}>
+                <TrashIcon width={25} height={20} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      ) : (
+        <></>
+      )}
     </>
   );
 });
