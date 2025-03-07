@@ -30,6 +30,7 @@ import FilterIconSvg from 'components/svg/FilterIconSvg';
 import SearchIconSvg from 'components/svg/SearchIconSvg';
 import VoiceIconSvg from 'components/svg/VoiceIconSvg';
 
+import { Option } from './components/CustomMultiSelectDropdown';
 import DefaultSearchList from './components/DefaultSearchList';
 import DropdownSearchType from './components/DropdownSearchType';
 import FilterModal, { FilterCategory } from './components/FilterModal';
@@ -43,6 +44,7 @@ import colors from 'src/themes/colors';
 import {
   convertMediumTypeToCategories,
   convertSourceGroupToCategories,
+  convertSourceToCategories,
 } from './utils';
 
 import { FilterSection } from './type';
@@ -91,7 +93,7 @@ export const SearchPage = memo(() => {
   const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
 
   const [selectedFilter, setSelectedFilter] = useState<
-    Record<FilterSection, (number | string)[]>
+    Record<FilterSection, Option[]>
   >({});
 
   const [newsObjects, setNewsObjects] = useState<
@@ -126,16 +128,20 @@ export const SearchPage = memo(() => {
   const filterParams = useMemo(() => {
     const source = sourceData?.data || [];
 
-    const language = (selectedFilter?.Languages || []) as string[];
-
-    const mediumtypegroup = (selectedFilter?.['Content types'] ||
+    const language = (selectedFilter?.Languages?.map((it) => it.value) ||
       []) as string[];
+
+    const mediumtypegroup = (selectedFilter?.['Content types']?.map(
+      (it) => it.value,
+    ) || []) as string[];
 
     const selectedCountry = selectedFilter?.Country || [];
 
     const sourceid = uniq(
       source
-        .filter((it) => selectedCountry.includes(it.country))
+        .filter((it) =>
+          selectedCountry?.map((it) => it.value).includes(it.country),
+        )
         .map((it) => it.id),
     );
 
@@ -143,7 +149,9 @@ export const SearchPage = memo(() => {
 
     const sourcegroupid = uniq(
       source
-        .filter((it) => sourcegroup.includes(it.sourceGroup))
+        .filter((it) =>
+          sourcegroup.map((it) => it.value).includes(it.sourceGroup),
+        )
         .map((it) => it.sourceGroupId),
     );
 
@@ -242,6 +250,8 @@ export const SearchPage = memo(() => {
       data.push(convertSourceGroupToCategories(sourceGroupData.data));
     }
 
+    data.push(convertSourceToCategories(sourceData?.data ?? []));
+
     return data;
   }, [mediumtypegroupData, sourceGroupData]);
 
@@ -254,6 +264,7 @@ export const SearchPage = memo(() => {
       'Content types': queryObject.mediaTypes,
       Country: queryObject.country,
       'Newsbrands groups': queryObject.sourcegroupid,
+      Newsbrands: queryObject.sourceid,
     });
   }, []);
 

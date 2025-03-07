@@ -8,6 +8,10 @@ import { PATH_SCREEN } from 'src/constants/pathName';
 
 import { NewsObject } from 'src/models/publicationModel';
 
+import {
+  ExploreMenu,
+  setCurrentExploreMenu,
+} from 'src/redux/slices/exploreSlice';
 import { getNewsObject } from 'src/redux/slices/newsObjectSlice';
 import { AppDispatch, RootState } from 'src/redux/store';
 
@@ -47,6 +51,9 @@ const RealtimeFeed = () => {
       <ShowMore
         title={t('ExploreScreen.realtimeFeedText')}
         showMoreText={t('ExploreScreen.showMoreRealtimeFeedText')}
+        onPress={() =>
+          dispatch(setCurrentExploreMenu(ExploreMenu.REALTIME_FEED))
+        }
       />
       {newsObject?.map((item, index) => (
         <RealtimeFeedItem

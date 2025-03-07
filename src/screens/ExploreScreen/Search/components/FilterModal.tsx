@@ -22,8 +22,8 @@ export interface FilterCategory {
 interface FilterModalProps {
   visible: boolean;
   onClose: () => void;
-  selections: Record<string, (number | string)[]>;
-  setSelections: (selections: Record<string, (number | string)[]>) => void;
+  selections: Record<string, Option[]>;
+  setSelections: (selections: Record<string, Option[]>) => void;
   categories: FilterCategory[];
 }
 
@@ -42,12 +42,14 @@ const FilterModal: React.FC<FilterModalProps> = ({
 
   const [tempSelections, setTempSelections] = useState(selections);
 
+  console.log(tempSelections);
+
   useEffect(() => {
     setTempSelections(selections);
   }, [selections]);
 
   const handleSelectionChange = useCallback(
-    (categoryTitle: string, values: (number | string)[]) => {
+    (categoryTitle: string, values: Option[]) => {
       setTempSelections((prev) => ({
         ...prev,
         [categoryTitle]: values,
@@ -97,7 +99,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                       style={styles.selectionCategory}
                     >{`${category}: `}</Text>
                     <Text style={styles.selectionValues}>
-                      {values.join(', ')}
+                      {values.map((it) => it.label).join(', ')}
                     </Text>
                   </View>
                   <TouchableOpacity

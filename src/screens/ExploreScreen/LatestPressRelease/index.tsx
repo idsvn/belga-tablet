@@ -8,6 +8,10 @@ import { PressReleaseModel } from 'src/models/pressReleaseModel';
 import { UserModel } from 'src/models/userModel';
 
 import { getLatestPressRelease } from 'src/redux/slices/deliverablesSlice';
+import {
+  ExploreMenu,
+  setCurrentExploreMenu,
+} from 'src/redux/slices/exploreSlice';
 import { AppDispatch, RootState } from 'src/redux/store';
 
 import LatestPressReleaseItem from './components/LatestPressReleaseItem';
@@ -38,6 +42,7 @@ const LatestPressRelease = () => {
       <ShowMore
         title={t('ExploreScreen.latestPressReleaseTitleText')}
         showMoreText={t('ExploreScreen.showMoreTextLatestPressRelease')}
+        onPress={() => dispatch(setCurrentExploreMenu(ExploreMenu.NEWSLETTERS))}
       />
       {Array.isArray(latestPressRelease) &&
         latestPressRelease?.map((item, index) => (

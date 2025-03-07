@@ -18,9 +18,9 @@ export interface Option {
 
 interface CustomMultiSelectDropdownProps {
   options: Option[];
-  onSelectionChange: (selectedValues: (number | string)[]) => void;
+  onSelectionChange: (selectedValues: Option[]) => void;
   title?: string;
-  selectedValues?: (number | string)[];
+  selectedValues?: Option[];
   isOpen?: boolean;
   setIsOpen(title?: string): void;
 }
@@ -33,8 +33,7 @@ const CustomMultiSelectDropdown: React.FC<CustomMultiSelectDropdownProps> = ({
   isOpen,
   setIsOpen,
 }) => {
-  const [selectedItems, setSelectedItems] =
-    useState<(number | string)[]>(selectedValues);
+  const [selectedItems, setSelectedItems] = useState<Option[]>(selectedValues);
 
   const [searchText, setSearchText] = useState('');
 
@@ -46,7 +45,7 @@ const CustomMultiSelectDropdown: React.FC<CustomMultiSelectDropdownProps> = ({
     setIsOpen(isOpen ? undefined : title || '');
   };
 
-  const handleSelect = (value: number | string) => {
+  const handleSelect = (value: Option) => {
     const newSelectedItems = selectedItems.includes(value)
       ? selectedItems.filter((item) => item !== value)
       : [...selectedItems, value];
@@ -58,17 +57,18 @@ const CustomMultiSelectDropdown: React.FC<CustomMultiSelectDropdownProps> = ({
   const renderOption = ({ item }: { item: Option }) => {
     const Icon = item.icon;
 
-    const isSelected = selectedItems.includes(item.value);
+    const isSelected = selectedItems.some((it) => it.value === item.value);
 
     return (
       <TouchableOpacity
         style={styles.optionContainer}
-        onPress={() => handleSelect(item.value)}
+        onPress={() => handleSelect(item)}
       >
         <CheckBox
           size={15}
           checked={isSelected}
-          onPress={() => handleSelect(item.value)}
+          onPress={() => handleSelect(item)}
+          checkedBoxColor={colors.darkBlue200}
         />
         {item.icon && <Icon />}
         <Text
@@ -76,6 +76,7 @@ const CustomMultiSelectDropdown: React.FC<CustomMultiSelectDropdownProps> = ({
             styles.optionText,
             {
               color: isSelected ? colors.darkBlue200 : colors.gray100,
+              fontFamily: isSelected ? fontFamily.bold : fontFamily.regular,
             },
           ]}
         >
@@ -89,7 +90,14 @@ const CustomMultiSelectDropdown: React.FC<CustomMultiSelectDropdownProps> = ({
     <View style={styles.container}>
       <TouchableOpacity style={styles.dropdownButton} onPress={toggleDropdown}>
         <View style={styles.dropdownContent}>
-          <Text style={styles.dropdownText}>{title}</Text>
+          <Text
+            style={[
+              styles.dropdownText,
+              { color: isOpen ? colors.darkBlue200 : colors.gray },
+            ]}
+          >
+            {title}
+          </Text>
           <View style={styles.countContainer}>
             <Text style={styles.count}>{selectedItems.length}</Text>
           </View>

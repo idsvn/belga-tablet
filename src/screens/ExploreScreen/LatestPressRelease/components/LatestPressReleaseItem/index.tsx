@@ -22,7 +22,7 @@ const LatestPressReleaseItem = (props: LatestPressReleaseItemProps) => {
   const { content, publishDate } = pressRelease ?? {};
 
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={() => {}}>
       <View style={styles.titleView}>
         <Text style={styles.titleText} numberOfLines={1}>
           {content?.[Language.EN]?.title || ''}

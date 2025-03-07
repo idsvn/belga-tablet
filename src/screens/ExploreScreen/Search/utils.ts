@@ -1,5 +1,6 @@
 import { MediumTypeGroup } from 'src/models/mediumTypeGroupModel';
 import { SourceGroup } from 'src/models/sourceGroupModel';
+import { Source } from 'src/models/sourceModel';
 
 import BelgaMiniIconSvg from 'components/svg/BelgaMiniIconSvg';
 import MediaIconSvg from 'components/svg/MediaIconSvg';
@@ -43,6 +44,16 @@ export const convertSourceGroupToCategories = (
     options: data.map((item) => ({
       label: item.name,
       value: item.sourceGroup,
+    })),
+  };
+};
+
+export const convertSourceToCategories = (data: Source[]): FilterCategory => {
+  return {
+    title: 'Newsbrands',
+    options: data.map((item) => ({
+      label: item.name,
+      value: item.id,
     })),
   };
 };

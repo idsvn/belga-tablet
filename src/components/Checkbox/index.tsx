@@ -9,7 +9,7 @@ import { CheckBoxProps } from './types';
 import styles from './styles';
 
 const CheckBox = (props: CheckBoxProps) => {
-  const { checked, style, onPress, size = 25 } = props;
+  const { checked, style, onPress, size = 25, checkedBoxColor } = props;
 
   return (
     <TouchableOpacity
@@ -23,7 +23,11 @@ const CheckBox = (props: CheckBoxProps) => {
       onPress={onPress}
     >
       {checked && (
-        <Icon name="check" size={size - 3} color={theme.colors.primary} />
+        <Icon
+          name="check"
+          size={size - 3}
+          color={checkedBoxColor ?? theme.colors.primary}
+        />
       )}
     </TouchableOpacity>
   );
