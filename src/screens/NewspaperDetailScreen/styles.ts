@@ -43,7 +43,6 @@ const styles = StyleSheet.create({
   contentTitle: {
     fontWeight: 'bold',
     fontSize: 40,
-    width: '80%',
   },
   infoBox: {
     backgroundColor: theme.colors.gray400,

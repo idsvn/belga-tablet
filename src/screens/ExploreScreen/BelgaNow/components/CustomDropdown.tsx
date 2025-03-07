@@ -5,7 +5,7 @@ import { MultiSelect } from 'react-native-element-dropdown';
 
 import CheckBox from 'components/Checkbox';
 
-import theme from 'src/themes';
+import colors from 'src/themes/colors';
 
 import styles from '../styles';
 
@@ -32,7 +32,7 @@ const CustomDropdown = ({
       }
       itemTextStyle={styles.dropdownText}
       placeholderStyle={styles.dropdownText}
-      iconStyle={{ tintColor: theme.colors.primary }}
+      iconColor={colors.primary}
       value={selectedValues}
       labelField="label"
       valueField="value"

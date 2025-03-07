@@ -127,12 +127,14 @@ const NewspaperDetailScreen = () => {
             ) : null}
           </View>
           <View style={styles.contentContainer}>
-            <ImageWithSkeleton
-              imageSource={imagesPage?.[0]?.references?.[0]?.href}
-              width={170}
-              height={244}
-              style={styles.contentImage}
-            />
+            {!!imagesPage?.[0]?.references?.[0]?.href && (
+              <ImageWithSkeleton
+                imageSource={imagesPage?.[0]?.references?.[0]?.href}
+                width={170}
+                height={244}
+                style={styles.contentImage}
+              />
+            )}
             <Text
               style={[styles.contentTitle, { fontSize: fontSizeDefault + 26 }]}
             >
@@ -197,15 +199,19 @@ const NewspaperDetailScreen = () => {
             </View>
           </View>
           <View>
-            {imagesBody?.map((image, index) => (
-              <ImageWithSkeleton
-                key={index}
-                imageSource={image?.references?.[0]?.href}
-                height={503}
-                style={styles.imageBodyView}
-                imageStyle={styles.imageBodyStyle}
-              />
-            ))}
+            {imagesBody?.map((image, index) => {
+              if (image?.references?.[0]?.href) {
+                return (
+                  <ImageWithSkeleton
+                    key={index}
+                    imageSource={image?.references?.[0]?.href}
+                    height={503}
+                    style={styles.imageBodyView}
+                    imageStyle={styles.imageBodyStyle}
+                  />
+                );
+              }
+            })}
             <View style={styles.htmlView}>
               <RenderHTML
                 value={`<p>${newspaperDetail?.body || ''}</p>`}
