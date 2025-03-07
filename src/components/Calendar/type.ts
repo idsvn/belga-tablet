@@ -1,9 +1,12 @@
 export enum QuickSelectOptions {
+  Last24Hours = 'Calendar.last24Hours',
   Today = 'Calendar.todayText',
   Tomorrow = 'Calendar.tomorrowText',
-  Next7Days = 'Calendar.next7DaysText',
+  Last7Days = 'Calendar.last7DaysText',
   ThisMonth = 'Calendar.thisMonthText',
   ThisYear = 'Calendar.thisYearText',
+  Yesterday = 'Calendar.yesterday',
+  ThisWeek = 'Calendar.thisWeek',
 }
 
 export interface DateObject {

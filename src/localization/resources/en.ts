@@ -7,9 +7,12 @@ const localizationString = {
       selectEndDate: 'Select end date',
       todayText: 'Today',
       tomorrowText: 'Tomorrow',
-      next7DaysText: 'Next 7 days',
+      last7DaysText: 'Last 7 days',
       thisMonthText: 'This month',
       thisYearText: 'This year',
+      last24Hours: 'Last 24 hours',
+      yesterday: 'Yesterday',
+      thisWeek: 'This week',
     },
     BottomNavigation: {
       favorites: 'Favorites',

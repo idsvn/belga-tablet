@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { useTranslation } from 'react-i18next';
 import { Calendar } from 'react-native-calendars';
+import { Dropdown } from 'react-native-element-dropdown';
 
 import ArrowRightIconSvg from 'components/svg/ArrowRightIconSvg';
 
@@ -50,6 +51,21 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
   );
 
   const [displayEndDate, setDisplayEndDate] = useState(initialEndDate || '');
+
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
+
+  const [currentYear, setCurrentYear] = useState(
+    new Date().getFullYear().toString(),
+  );
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear().toString());
+    setCurrentMonth(new Date().getMonth() + 1);
+  }, []);
+
+  const current = useMemo(() => {
+    return `${currentYear}-${currentMonth.toString().padStart(2, '0')}-01`;
+  }, [currentYear, currentMonth]);
 
   const markedDates = useMemo(() => {
     const newMarkedDates: { [key: string]: any } = {};
@@ -190,6 +206,78 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
     onClose?.();
   };
 
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ].map((month, index) => ({
+    label: month,
+    value: (index + 1).toString(),
+  }));
+
+  const CustomHeader = () => {
+    const years = useMemo(() => {
+      return Array.from({ length: 40 }, (_, i) =>
+        (new Date().getFullYear() - i).toString(),
+      ).map((year) => ({ label: year, value: year }));
+    }, []);
+
+    const onChangeMonth = useCallback((item) => {
+      setCurrentMonth(parseInt(item.value));
+    }, []);
+
+    const onChangeYear = useCallback((item) => {
+      setCurrentYear(item.value);
+    }, []);
+
+    return (
+      <View style={styles.customHeader}>
+        <Dropdown
+          style={styles.dropdown}
+          data={months}
+          labelField="label"
+          valueField="value"
+          placeholder="Select Month"
+          value={currentMonth.toString()}
+          iconColor="white"
+          onChange={onChangeMonth}
+          placeholderStyle={styles.dropdownPlaceholder}
+          selectedTextStyle={styles.dropdownSelectedText}
+          itemTextStyle={styles.dropdownItemText}
+          maxHeight={200}
+        />
+        <Dropdown
+          style={styles.dropdown}
+          data={years}
+          labelField="label"
+          valueField="value"
+          placeholder="Select Year"
+          value={currentYear}
+          onChange={onChangeYear}
+          iconColor="white"
+          placeholderStyle={styles.dropdownPlaceholder}
+          selectedTextStyle={styles.dropdownSelectedText}
+          itemTextStyle={styles.dropdownItemText}
+          maxHeight={200}
+        />
+      </View>
+    );
+  };
+
+  const renderHeader = useCallback(
+    () => <CustomHeader />,
+    [currentMonth, currentYear],
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.dateContainer}>
@@ -241,7 +329,8 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
 
       <View style={styles.calendar}>
         <Calendar
-          current={initialStartDate}
+          key={current}
+          current={current}
           markingType={
             displayStartDate === displayEndDate ? undefined : 'period'
           }
@@ -262,6 +351,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
             textMonthFontSize: 16,
             textDayHeaderFontSize: 12,
           }}
+          renderHeader={renderHeader}
         />
       </View>
 
@@ -269,33 +359,43 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
         <View style={styles.quickSelect}>
           <View style={styles.row}>
             <QuickSelectButton
+              option={QuickSelectOptions.Last24Hours}
+              isSelected={selectedQuickTap === QuickSelectOptions.Last24Hours}
+              onPress={onQuickButtonPress}
+            />
+            <QuickSelectButton
+              option={QuickSelectOptions.Yesterday}
+              isSelected={selectedQuickTap === QuickSelectOptions.Yesterday}
+              onPress={onQuickButtonPress}
+            />
+            <QuickSelectButton
               option={QuickSelectOptions.Today}
               isSelected={selectedQuickTap === QuickSelectOptions.Today}
               onPress={onQuickButtonPress}
             />
             <QuickSelectButton
-              option={QuickSelectOptions.Tomorrow}
-              isSelected={selectedQuickTap === QuickSelectOptions.Tomorrow}
-              onPress={onQuickButtonPress}
-            />
-            <QuickSelectButton
-              option={QuickSelectOptions.Next7Days}
-              isSelected={selectedQuickTap === QuickSelectOptions.Next7Days}
+              option={QuickSelectOptions.Last7Days}
+              isSelected={selectedQuickTap === QuickSelectOptions.Last7Days}
               onPress={onQuickButtonPress}
             />
           </View>
           <View style={styles.row}>
             <QuickSelectButton
+              option={QuickSelectOptions.ThisWeek}
+              isSelected={selectedQuickTap === QuickSelectOptions.ThisWeek}
+              onPress={onQuickButtonPress}
+            />
+            <QuickSelectButton
               option={QuickSelectOptions.ThisMonth}
               isSelected={selectedQuickTap === QuickSelectOptions.ThisMonth}
               onPress={onQuickButtonPress}
             />
-            <View style={styles.quickButton} />
             <QuickSelectButton
               option={QuickSelectOptions.ThisYear}
               isSelected={selectedQuickTap === QuickSelectOptions.ThisYear}
               onPress={onQuickButtonPress}
             />
+            <View style={styles.quickButton} />
           </View>
         </View>
       )}

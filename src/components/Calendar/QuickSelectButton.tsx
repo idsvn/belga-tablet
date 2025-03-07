@@ -10,6 +10,11 @@ import { DateObject, QuickSelectOptions } from './type';
 
 import { styles } from './styles';
 
+moment.updateLocale('en', {
+  week: {
+    dow: 1,
+  },
+});
 export type OnPressQuickSelectType = ({
   startDate,
   endDate,
@@ -59,15 +64,21 @@ const QuickSelectButton: React.FC<QuickSelectButtonProps> = ({
         startDate = createDateObject(today);
         endDate = startDate;
         break;
+      case QuickSelectOptions.Last24Hours:
+        startDate = createDateObject(today.subtract(1, 'day'));
+        endDate = createDateObject(today);
+        break;
+      case QuickSelectOptions.Yesterday:
+        startDate = createDateObject(today.subtract(1, 'day'));
+        endDate = startDate;
+        break;
       case QuickSelectOptions.Tomorrow:
         startDate = createDateObject(tomorrow);
         endDate = startDate;
         break;
-      case QuickSelectOptions.Next7Days:
-        startDate = createDateObject(today);
-        const next7Days = moment(today).add(6, 'days');
-
-        endDate = createDateObject(next7Days);
+      case QuickSelectOptions.Last7Days:
+        startDate = createDateObject(moment(today).subtract(6, 'days'));
+        endDate = createDateObject(today);
         break;
       case QuickSelectOptions.ThisMonth:
         startDate = createDateObject(today.startOf('month'));
@@ -77,11 +88,14 @@ const QuickSelectButton: React.FC<QuickSelectButtonProps> = ({
         startDate = createDateObject(today.startOf('year'));
         endDate = createDateObject(today.endOf('year'));
         break;
+      case QuickSelectOptions.ThisWeek:
+        startDate = createDateObject(today.startOf('week'));
+        endDate = createDateObject(today.endOf('week'));
+        break;
       default:
         break;
     }
 
-    // Call the onPress callback with the calculated dates
     onPress({ startDate, endDate, label: option });
   };
 

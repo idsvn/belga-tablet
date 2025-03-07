@@ -7,7 +7,7 @@ const localizationStringNL = {
       selectEndDate: 'Select end date',
       todayText: 'Today',
       tomorrowText: 'Tomorrow',
-      next7DaysText: 'Next 7 days',
+      last7DaysText: 'Next 7 days',
       thisMonthText: 'This month',
       thisYearText: 'This year',
     },
