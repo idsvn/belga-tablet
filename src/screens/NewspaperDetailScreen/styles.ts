@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
     height: 244,
   },
   contentTitle: {
+    flex: 1,
     fontWeight: 'bold',
     fontSize: 40,
   },

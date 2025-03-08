@@ -5,7 +5,13 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { PanResponder, Platform, TouchableOpacity, View } from 'react-native';
+import {
+  PanResponder,
+  Platform,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 
 import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
 import moment from 'moment';
@@ -28,7 +34,7 @@ import { getPublicationByDeliverableId } from 'src/redux/slices/deliverablesSlic
 import { AppDispatch, RootState } from 'src/redux/store';
 
 import { GENERAL_DATE_FORMAT } from 'src/utils/dateUtils';
-import { heightScreen, widthScreen } from 'src/utils/systemUtils';
+import { widthScreen } from 'src/utils/systemUtils';
 
 import NewspaperScreenLayout from 'components/Layout/NewspaperScreenLayout';
 
@@ -40,10 +46,12 @@ import { ZoneSelectedType } from './types';
 
 import styles from './styles';
 
-const heightContent = heightScreen - 90 - 178 - 50;
-
 const NewspaperScreen = () => {
   const { t } = useTranslation();
+
+  const { height } = useWindowDimensions();
+
+  const heightContent = height - 90 - 178 - 50;
 
   const { id, sourceId } = getParams();
 
@@ -160,80 +168,83 @@ const NewspaperScreen = () => {
     setDate(start);
   }, []);
 
-  const renderPublicationItem = ({ item }) => (
-    <ReactNativeZoomableView
-      maxZoom={5}
-      minZoom={1}
-      zoomStep={0.3}
-      initialZoom={1}
-      bindToBorders={true}
-      style={{
-        height: heightContent,
-        width: widthScreen,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingTop: 10,
-        paddingHorizontal: 20,
-      }}
-      onZoomBefore={() => {
-        setIsZooming(true);
-        if (clickTimeout.current) {
-          clearTimeout(clickTimeout.current);
-        }
-      }}
-      onZoomAfter={() => {
-        setIsZooming(false);
-      }}
-      {...panResponder.panHandlers}
-    >
-      <FastImage
-        source={{ uri: item?.attachments?.[0]?.references?.[0]?.href }}
-        resizeMode="contain"
-        style={[styles.image]}
-      />
-      {Platform.OS === 'android' && (
-        <TouchableOpacity
-          style={{ position: 'absolute', width: '100%', height: '100%' }}
-        ></TouchableOpacity>
-      )}
-
-      {item?.newsObjects?.map((newsObject: NewsObject) =>
-        newsObject?.zones?.map((zone, index) => (
+  const renderPublicationItem = useCallback(
+    ({ item }) => (
+      <ReactNativeZoomableView
+        maxZoom={5}
+        minZoom={1}
+        zoomStep={0.3}
+        initialZoom={1}
+        bindToBorders={true}
+        style={{
+          height: heightContent,
+          width: widthScreen,
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingTop: 10,
+          paddingHorizontal: 20,
+        }}
+        onZoomBefore={() => {
+          setIsZooming(true);
+          if (clickTimeout.current) {
+            clearTimeout(clickTimeout.current);
+          }
+        }}
+        onZoomAfter={() => {
+          setIsZooming(false);
+        }}
+        {...panResponder.panHandlers}
+      >
+        <FastImage
+          source={{ uri: item?.attachments?.[0]?.references?.[0]?.href }}
+          resizeMode="contain"
+          style={[styles.image]}
+        />
+        {Platform.OS === 'android' && (
           <TouchableOpacity
-            key={`${newsObject.uuid}-${index}`}
-            activeOpacity={1}
-            onPress={() => {
-              if (newsObject.uuid) {
-                handleZonePress(newsObject.uuid);
-              }
-            }}
-            onPressIn={() => {
-              handleZonePressIn({
-                uuid: newsObject.uuid!,
-                zone,
-              });
-            }}
-            onPressOut={() => {
-              zoneId.current = newsObject.uuid;
-              setSelectedZone(undefined);
-            }}
-            style={[
-              styles.zone,
-              {
-                left: `${zone.x * 100}%`,
-                top: `${zone.y * 100}%`,
-                width: `${zone.width * 100}%`,
-                height: `${zone.height * 100}%`,
-              },
-            ]}
-          >
-            {selectedZone?.uuid === newsObject.uuid ? (
-              <View style={styles.zoneHighlight} />
-            ) : null}
-          </TouchableOpacity>
-        )),
-      )}
-    </ReactNativeZoomableView>
+            style={{ position: 'absolute', width: '100%', height: '100%' }}
+          ></TouchableOpacity>
+        )}
+
+        {item?.newsObjects?.map((newsObject: NewsObject) =>
+          newsObject?.zones?.map((zone, index) => (
+            <TouchableOpacity
+              key={`${newsObject.uuid}-${index}`}
+              activeOpacity={1}
+              onPress={() => {
+                if (newsObject.uuid) {
+                  handleZonePress(newsObject.uuid);
+                }
+              }}
+              onPressIn={() => {
+                handleZonePressIn({
+                  uuid: newsObject.uuid!,
+                  zone,
+                });
+              }}
+              onPressOut={() => {
+                zoneId.current = newsObject.uuid;
+                setSelectedZone(undefined);
+              }}
+              style={[
+                styles.zone,
+                {
+                  left: `${zone.x * 100}%`,
+                  top: `${zone.y * 100}%`,
+                  width: `${zone.width * 100}%`,
+                  height: `${zone.height * 100}%`,
+                },
+              ]}
+            >
+              {selectedZone?.uuid === newsObject.uuid ? (
+                <View style={styles.zoneHighlight} />
+              ) : null}
+            </TouchableOpacity>
+          )),
+        )}
+      </ReactNativeZoomableView>
+    ),
+    [heightContent],
   );
 
   const handleScrollToIndex = (index: number) => {

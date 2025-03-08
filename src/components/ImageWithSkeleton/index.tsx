@@ -1,6 +1,7 @@
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 import { StyleProp, TouchableOpacity, ViewStyle } from 'react-native';
 
+import { useNetInfo } from '@react-native-community/netinfo';
 import FastImage, { ImageStyle } from 'react-native-fast-image';
 import ImageView from 'react-native-image-viewing';
 import Skeleton from 'react-native-skeleton-placeholder';
@@ -21,7 +22,7 @@ const ImageWithSkeleton = ({
 }: ImageWithSkeletonProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const [hasError, setHasError] = useState(false);
+  const { isConnected } = useNetInfo();
 
   const [visible, setIsVisible] = useState(false);
 
@@ -44,10 +45,6 @@ const ImageWithSkeleton = ({
 
     return [null, []];
   }, [imageSource, avatarMetadata]);
-
-  const handleError = useCallback(() => {
-    setHasError(true);
-  }, []);
 
   const containerStyle: StyleProp<ViewStyle> = useMemo(
     () => [
@@ -80,13 +77,12 @@ const ImageWithSkeleton = ({
         onPress={() => isPreview && setIsVisible(true)}
       >
         <FastImage
-          source={hasError ? defaultImageSource : source?.[0]}
+          source={isConnected === false ? defaultImageSource : source?.[0]}
           style={imageStyles}
           resizeMode={resizeMode}
           onLoad={() => setIsLoaded(true)}
-          onError={handleError}
         />
-        {!isLoaded && !hasError && (
+        {!isLoaded && isConnected && (
           <Skeleton>
             <Skeleton.Item width={width} height={height} borderRadius={0} />
           </Skeleton>

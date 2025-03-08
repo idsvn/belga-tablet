@@ -37,6 +37,7 @@ export const useUpdateTags = ({ tags, id }: UseUpdateTagsProps) => {
   };
 
   useEffect(() => {
+    if (isFavorite) return;
     const isFavoriteFromTags = tags.some(
       (tag) => (tag.type as QueryParamType) === QueryParamType.SAVED_NEWS,
     );

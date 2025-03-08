@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
 import { useKeycloak } from '@react-keycloak/native';
+import { useNetInfo } from '@react-native-community/netinfo';
 import {
   CardStyleInterpolators,
   createStackNavigator,
@@ -36,6 +37,8 @@ const optionsRoot = {
 const RootStackNavigator = () => {
   const { keycloak } = useKeycloak();
 
+  const { isConnected } = useNetInfo();
+
   const clearToken = () => {
     userSessionManager.reset();
     keycloak?.clearToken();
@@ -45,6 +48,15 @@ const RootStackNavigator = () => {
     const storedToken = userSessionManager.getAccessToken();
 
     const storedRefreshToken = userSessionManager.getRefreshToken();
+
+    if (!isConnected) {
+      BootSplash.hide({ fade: true });
+      if (storedToken && storedRefreshToken) {
+        replace(PATH_SCREEN.MAIN);
+      }
+
+      return;
+    }
 
     if (storedToken && storedRefreshToken && keycloak) {
       keycloak.token = storedToken;
@@ -62,10 +74,14 @@ const RootStackNavigator = () => {
   };
 
   useEffect(() => {
+    if (isConnected === null) {
+      return;
+    }
+
     restoreToken().finally(() => {
       BootSplash.hide({ fade: true });
     });
-  }, []);
+  }, [isConnected]);
 
   const routeName = PATH_SCREEN.INTRODUCE_SCREEN;
 

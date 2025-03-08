@@ -253,7 +253,7 @@ export const SearchPage = memo(() => {
     data.push(convertSourceToCategories(sourceData?.data ?? []));
 
     return data;
-  }, [mediumtypegroupData, sourceGroupData]);
+  }, [mediumtypegroupData, sourceGroupData, sourceData]);
 
   const handleSavedSearchPress = useCallback((queryObject: QueryObject) => {
     setSearchText(queryObject.searchText);
