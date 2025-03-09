@@ -29,6 +29,7 @@
     "@reduxjs/toolkit": "^2.3.0",
     "add": "^2.0.6",
     "axios": "^1.6.8",
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "base-64": "^1.0.0",
     "compare-versions": "^6.1.1",
     "i18next": "^23.16.4",

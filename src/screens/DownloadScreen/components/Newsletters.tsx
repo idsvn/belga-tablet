@@ -157,8 +157,6 @@ const Newsletters = ({
     const filtered = downloadedNewspaperDetails.filter((item) => {
       const publishDate = new Date(item.publishDate || '');
 
-      console.log({ publishDate, startDate, endDate });
-
       const isWithinDateRange =
         publishDate >= startDate && publishDate <= endDate;
 
