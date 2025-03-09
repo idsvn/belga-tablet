@@ -16,8 +16,8 @@ import { DateObject, QuickSelectOptions } from './type';
 import { styles } from './styles';
 
 export interface OnDateChangeParams {
-  startDate: string;
-  endDate: string;
+  startDate?: string;
+  endDate?: string;
   label?: string;
 }
 
@@ -31,6 +31,7 @@ interface DateRangePickerProps {
   onDatesChange?: ({ startDate, endDate, label }: OnDateChangeParams) => void;
   onClose?: () => void;
   singleSelect?: boolean;
+  shouldShowWhenever?: boolean;
 }
 
 const DateRangePicker: React.FC<DateRangePickerProps> = ({
@@ -43,6 +44,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
   selectedQuickTap,
   setSelectedQuickTap,
   singleSelect = false,
+  shouldShowWhenever,
 }) => {
   const { t } = useTranslation();
 
@@ -157,6 +159,26 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
     label,
   }) => {
     if (!startDate || !endDate) {
+      // Clear the calendar highlights by resetting display dates
+      setDisplayStartDate('');
+      setDisplayEndDate('');
+
+      // Clear the parent state
+      setStartDate('');
+      setEndDate('');
+
+      // Update the selected quick tap option
+      setSelectedQuickTap(label);
+
+      // Trigger onDatesChange with undefined dates
+      onDatesChange?.({
+        startDate: undefined,
+        endDate: undefined,
+        label: t(label),
+      });
+
+      onClose?.();
+
       return;
     }
 
@@ -402,7 +424,15 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
               isSelected={selectedQuickTap === QuickSelectOptions.ThisYear}
               onPress={onQuickButtonPress}
             />
-            <View style={styles.quickButton} />
+            {shouldShowWhenever ? (
+              <QuickSelectButton
+                option={QuickSelectOptions.Whenever}
+                isSelected={selectedQuickTap === QuickSelectOptions.Whenever}
+                onPress={onQuickButtonPress}
+              />
+            ) : (
+              <View style={styles.quickButton} />
+            )}
           </View>
         </View>
       )}

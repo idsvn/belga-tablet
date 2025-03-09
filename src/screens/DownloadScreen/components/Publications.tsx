@@ -34,7 +34,7 @@ const Publications = ({
   date,
   searchKeyword,
 }: {
-  date: { start: string; end: string };
+  date: { start?: string; end?: string };
   searchKeyword?: string;
 }) => {
   const downloadedPublications = useSelector<
@@ -112,10 +112,6 @@ const Publications = ({
   }, [downloadedPublications, selectedPublications]);
 
   useEffect(() => {
-    const startDate = new Date(date.start);
-
-    const endDate = new Date(date.end);
-
     const filtered = downloadedPublications.filter((item) => {
       const data = item.deliverableModel;
 
@@ -124,6 +120,17 @@ const Publications = ({
       );
 
       const title = data.source ?? data.subSource;
+
+      if (date.start === undefined || date.end === undefined) {
+        return (
+          !searchKeyword ||
+          title?.toLocaleLowerCase().includes(searchKeyword.toLocaleLowerCase())
+        );
+      }
+
+      const startDate = new Date(date.start);
+
+      const endDate = new Date(date.end);
 
       return (
         publishDate >= startDate &&

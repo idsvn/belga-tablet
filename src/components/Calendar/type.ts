@@ -7,6 +7,7 @@ export enum QuickSelectOptions {
   ThisYear = 'Calendar.thisYearText',
   Yesterday = 'Calendar.yesterday',
   ThisWeek = 'Calendar.thisWeek',
+  Whenever = 'Calendar.Whenever',
 }
 
 export interface DateObject {

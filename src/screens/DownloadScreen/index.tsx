@@ -35,7 +35,7 @@ const DownloadScreen = () => {
     setSearchText(text);
   }, []);
 
-  const [date, setDate] = useState(() => {
+  const [date, setDate] = useState<{ start?: string; end?: string }>(() => {
     const formatDate = (date: Date): string => date.toISOString().split('T')[0];
 
     const today = new Date();
@@ -50,7 +50,7 @@ const DownloadScreen = () => {
     };
   });
 
-  const onSelectStartAndEnd = useCallback((start: string, end: string) => {
+  const onSelectStartAndEnd = useCallback((start?: string, end?: string) => {
     setDate({ start, end });
   }, []);
 
@@ -92,6 +92,7 @@ const DownloadScreen = () => {
           initEndDate={end}
           onSelectStartAndEnd={onSelectStartAndEnd}
           defaultLabel={t('Calendar.last7DaysText')}
+          shouldShowWhenever={true}
         />
       </View>
 

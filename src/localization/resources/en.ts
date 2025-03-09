@@ -13,6 +13,7 @@ const localizationString = {
       last24Hours: 'Last 24 hours',
       yesterday: 'Yesterday',
       thisWeek: 'This week',
+      Whenever: 'Whenever',
     },
     BottomNavigation: {
       favorites: 'Favorites',

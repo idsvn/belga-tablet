@@ -20,8 +20,8 @@ export type OnPressQuickSelectType = ({
   endDate,
   label,
 }: {
-  startDate?: DateObject;
-  endDate?: DateObject;
+  startDate?: DateObject | undefined;
+  endDate?: DateObject | undefined;
   label: QuickSelectOptions;
 }) => void;
 
@@ -55,9 +55,9 @@ const QuickSelectButton: React.FC<QuickSelectButtonProps> = ({
       };
     };
 
-    let startDate: DateObject = createDateObject(today);
+    let startDate: DateObject | undefined = createDateObject(today);
 
-    let endDate: DateObject = startDate;
+    let endDate: DateObject | undefined = startDate;
 
     switch (option) {
       case QuickSelectOptions.Today:
@@ -91,6 +91,10 @@ const QuickSelectButton: React.FC<QuickSelectButtonProps> = ({
       case QuickSelectOptions.ThisWeek:
         startDate = createDateObject(today.startOf('week'));
         endDate = createDateObject(today.endOf('week'));
+        break;
+      case QuickSelectOptions.Whenever:
+        startDate = undefined;
+        endDate = undefined;
         break;
       default:
         break;

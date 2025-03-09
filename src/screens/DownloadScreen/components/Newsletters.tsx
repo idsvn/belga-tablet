@@ -33,14 +33,12 @@ const Newsletters = ({
   date,
   searchKeyword,
 }: {
-  date: { start: string; end: string };
+  date: { start?: string; end?: string };
   searchKeyword?: string;
 }) => {
   const downloadedNewspaperDetails = useSelector<RootState, DeliverableModel[]>(
     (state) => state.downloadStore.newsletterDetails,
   );
-
-  console.log(date);
 
   const { t } = useTranslation();
 
@@ -148,22 +146,25 @@ const Newsletters = ({
     [selectedNewspapers],
   );
 
-  // Add useEffect for filtering by date and title
   useEffect(() => {
-    const startDate = new Date(date.start);
-
-    const endDate = new Date(date.end);
-
     const filtered = downloadedNewspaperDetails.filter((item) => {
       const publishDate = new Date(item.publishDate || '');
-
-      const isWithinDateRange =
-        publishDate >= startDate && publishDate <= endDate;
 
       const isTitleMatch =
         !searchKeyword ||
         (item.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ??
           false);
+
+      if (!date.start || !date.end) {
+        return isTitleMatch;
+      }
+
+      const startDate = new Date(date.start);
+
+      const endDate = new Date(date.end);
+
+      const isWithinDateRange =
+        publishDate >= startDate && publishDate <= endDate;
 
       return isWithinDateRange && isTitleMatch;
     });

@@ -11,11 +11,12 @@ import fontFamily from 'src/themes/fontFamily';
 import { QuickSelectOptions } from 'components/Calendar/type';
 
 interface CalendarButtonProps {
-  onSelectStartAndEnd: (startDate: string, endDate: string) => void;
+  onSelectStartAndEnd: (startDate?: string, endDate?: string) => void;
   singleSelect?: boolean;
   defaultLabel?: string;
   initStartDate?: string;
   initEndDate?: string;
+  shouldShowWhenever?: boolean;
 }
 const CalendarButton = ({
   onSelectStartAndEnd,
@@ -23,6 +24,7 @@ const CalendarButton = ({
   defaultLabel,
   initStartDate,
   initEndDate,
+  shouldShowWhenever = false,
 }: CalendarButtonProps) => {
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
 
@@ -82,6 +84,7 @@ const CalendarButton = ({
             setSelectedQuickTap={setSelectedQuickTap}
             selectedQuickTap={selectedQuickTap}
             singleSelect={singleSelect}
+            shouldShowWhenever={shouldShowWhenever}
           />
         </Modal>
       </>
