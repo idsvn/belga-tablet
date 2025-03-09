@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingLeft: 5,
     marginTop: 5,
+    flex: 1,
   },
   dotView: {
     height: 10,

@@ -1,88 +1,54 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import {
-  PanResponder,
-  Platform,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
+import { useNetInfo } from '@react-native-community/netinfo';
 import moment from 'moment';
-import { useTranslation } from 'react-i18next';
-import FastImage from 'react-native-fast-image';
-import { FlatList } from 'react-native-gesture-handler';
+import { showMessage } from 'react-native-flash-message';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { PATH_SCREEN } from 'src/constants/pathName';
 
 import { useGetOccurrences } from 'src/services/newsObjectService';
 
-import {
-  NewsObject,
-  PublicationsDownloadedModel,
-  Zone,
-} from 'src/models/publicationModel';
+import { PublicationsDownloadedModel } from 'src/models/publicationModel';
 
 import { getPublicationByDeliverableId } from 'src/redux/slices/deliverablesSlice';
+import {
+  addPublication,
+  DownloadedPublicationModel,
+} from 'src/redux/slices/downloadSlice';
 import { AppDispatch, RootState } from 'src/redux/store';
 
 import { GENERAL_DATE_FORMAT } from 'src/utils/dateUtils';
-import { widthScreen } from 'src/utils/systemUtils';
+import { fetchImage } from 'src/utils/fileUtils';
 
-import NewspaperScreenLayout from 'components/Layout/NewspaperScreenLayout';
+import { globalLoading } from 'components/GlobalLoading';
 
-import PageList from './components/PageList';
+import { NewsPaperContent } from './components/NewPaperContent';
 
-import { getParams, navigate } from 'App';
-
-import { ZoneSelectedType } from './types';
-
-import styles from './styles';
+import { getParams } from 'App';
 
 const NewspaperScreen = () => {
-  const { t } = useTranslation();
+  const { id, sourceId, deliverableModel } = getParams();
 
-  const { height } = useWindowDimensions();
-
-  const heightContent = height - 90 - 178 - 50;
-
-  const { id, sourceId } = getParams();
+  const [isDownloading, setIsDownloading] = useState<boolean>(false);
 
   const dispatch = useDispatch<AppDispatch>();
-
-  const flatListRef = useRef<any>();
 
   const publicationsDownloaded = useSelector<
     RootState,
     PublicationsDownloadedModel[]
   >((state) => state.deliverablesStore.publicationsDownloaded);
 
-  const [selectedZone, setSelectedZone] = useState<ZoneSelectedType>();
-
-  const zoneId = useRef<string | null>();
-
-  const [activeIndex, setActiveIndex] = useState<number>(0);
-
-  const [isScrolling, setIsScrolling] = useState<boolean>(false);
-
-  const [isZooming, setIsZooming] = useState<boolean>(false);
-
-  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
-
-  const clickTimeout = useRef<NodeJS.Timeout | null>(null);
-
   const [date, setDate] = useState<string>();
 
   const userId = useSelector<RootState, number>(
     (state) => state.userStore.user.id,
   );
+
+  const { isConnected } = useNetInfo();
+
+  const downloadedPublications = useSelector<
+    RootState,
+    DownloadedPublicationModel[]
+  >((state) => state.downloadStore.downloadedPublications);
 
   const { data: occurrencesData } = useGetOccurrences({
     userid: userId,
@@ -105,6 +71,21 @@ const NewspaperScreen = () => {
     }
   }, [deliverableid]);
 
+  const currentDeliverableModel = useMemo(() => {
+    return (
+      publicationsDownloaded.find((it) => it.deliverableid === deliverableid)
+        ?.deliverableModel?.[0] ?? deliverableModel
+    );
+  }, [deliverableid]);
+
+  const isDownloaded = useMemo(() => {
+    return downloadedPublications.some(
+      (item) =>
+        item.deliverableModel.id === currentDeliverableModel.id ||
+        item.deliverableModel.id === currentDeliverableModel.deliverableId,
+    );
+  }, [downloadedPublications, currentDeliverableModel]);
+
   const publications = useMemo(() => {
     const publicationsExits = publicationsDownloaded?.find(
       (item) => item.deliverableid === deliverableid,
@@ -113,204 +94,58 @@ const NewspaperScreen = () => {
     return publicationsExits?.deliverableModel;
   }, [publicationsDownloaded, deliverableid]);
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: () => {
-        setIsScrolling(true);
-        if (scrollTimeout.current) {
-          clearTimeout(scrollTimeout.current);
-        }
-      },
-      onPanResponderRelease: () => {
-        scrollTimeout.current = setTimeout(() => {
-          setIsScrolling(false);
-        }, 300);
-      },
-    }),
-  ).current;
+  const onPressDownload = useCallback(async () => {
+    if (!isConnected) {
+      showMessage({
+        message: 'No Internet',
+        type: 'danger',
+      });
 
-  const handleZonePressIn = ({ uuid, zone }: { uuid: string; zone: Zone }) => {
-    if (!isScrolling && !isZooming) {
-      if (clickTimeout.current) {
-        clearTimeout(clickTimeout.current);
-      }
-
-      clickTimeout.current = setTimeout(() => {
-        if (!isScrolling && !isZooming) {
-          setSelectedZone({
-            uuid,
-            zone,
-          });
-        }
-      }, 300);
+      return;
     }
-  };
 
-  const handleZonePress = (zoneId: string) => {
-    if (!isScrolling && !isZooming) {
-      if (clickTimeout.current) {
-        clearTimeout(clickTimeout.current);
-      }
+    const imageUrls =
+      publications?.map(
+        (item) => item?.attachments?.[0]?.references?.[0]?.href,
+      ) ?? [];
 
-      clickTimeout.current = setTimeout(() => {
-        if (!isScrolling && !isZooming) {
-          navigate(PATH_SCREEN.NEWSPAPER_DETAIL_SCREEN, {
-            id: zoneId,
-          });
-          setSelectedZone(undefined);
-        }
-      }, 300);
+    setIsDownloading(true);
+    globalLoading.show();
+
+    try {
+      await Promise.all(imageUrls.map(fetchImage));
+      dispatch(
+        addPublication({
+          deliverableModel: currentDeliverableModel,
+          publication: publications,
+        }),
+      );
+    } catch (error) {
+      showMessage({
+        message: 'Downloaded error',
+        type: 'danger',
+      });
+    } finally {
+      showMessage({
+        message: 'Downloaded successfully',
+        type: 'success',
+      });
+      setIsDownloading(false);
+      globalLoading.hide();
     }
-  };
+  }, [publications, currentDeliverableModel]);
 
   const onSelectStartAndEnd = useCallback((start: string, __: string) => {
     setDate(start);
   }, []);
 
-  const renderPublicationItem = useCallback(
-    ({ item }) => (
-      <ReactNativeZoomableView
-        maxZoom={5}
-        minZoom={1}
-        zoomStep={0.3}
-        initialZoom={1}
-        bindToBorders={true}
-        style={{
-          height: heightContent,
-          width: widthScreen,
-          justifyContent: 'center',
-          alignItems: 'center',
-          paddingTop: 10,
-          paddingHorizontal: 20,
-        }}
-        onZoomBefore={() => {
-          setIsZooming(true);
-          if (clickTimeout.current) {
-            clearTimeout(clickTimeout.current);
-          }
-        }}
-        onZoomAfter={() => {
-          setIsZooming(false);
-        }}
-        {...panResponder.panHandlers}
-      >
-        <FastImage
-          source={{ uri: item?.attachments?.[0]?.references?.[0]?.href }}
-          resizeMode="contain"
-          style={[styles.image]}
-        />
-        {Platform.OS === 'android' && (
-          <TouchableOpacity
-            style={{ position: 'absolute', width: '100%', height: '100%' }}
-          ></TouchableOpacity>
-        )}
-
-        {item?.newsObjects?.map((newsObject: NewsObject) =>
-          newsObject?.zones?.map((zone, index) => (
-            <TouchableOpacity
-              key={`${newsObject.uuid}-${index}`}
-              activeOpacity={1}
-              onPress={() => {
-                if (newsObject.uuid) {
-                  handleZonePress(newsObject.uuid);
-                }
-              }}
-              onPressIn={() => {
-                handleZonePressIn({
-                  uuid: newsObject.uuid!,
-                  zone,
-                });
-              }}
-              onPressOut={() => {
-                zoneId.current = newsObject.uuid;
-                setSelectedZone(undefined);
-              }}
-              style={[
-                styles.zone,
-                {
-                  left: `${zone.x * 100}%`,
-                  top: `${zone.y * 100}%`,
-                  width: `${zone.width * 100}%`,
-                  height: `${zone.height * 100}%`,
-                },
-              ]}
-            >
-              {selectedZone?.uuid === newsObject.uuid ? (
-                <View style={styles.zoneHighlight} />
-              ) : null}
-            </TouchableOpacity>
-          )),
-        )}
-      </ReactNativeZoomableView>
-    ),
-    [heightContent],
-  );
-
-  const handleScrollToIndex = (index: number) => {
-    flatListRef?.current?.scrollToIndex({
-      animated: true,
-      index: index,
-    });
-  };
-
-  const onViewableItemsChanged = useRef(({ viewableItems }) => {
-    if (viewableItems.length > 0) {
-      setActiveIndex(viewableItems[0].index);
-    }
-  }).current;
-
-  const onScrollToStatusFail = () => {};
-
   return (
-    <NewspaperScreenLayout
-      style={styles.container}
-      title={`${t('NewspaperScreen.pageText')} ${publications?.[activeIndex].page || 0}`}
-      logoUrl={`${publications?.[activeIndex].sourceLogo}`}
-      newsObjects={publications?.[activeIndex].newsObjects}
-      pageNumber={publications?.[activeIndex].page}
+    <NewsPaperContent
+      publications={publications}
+      onPressDownload={isDownloaded ? undefined : onPressDownload}
       onSelectStartAndEnd={onSelectStartAndEnd}
-    >
-      <FlatList
-        horizontal
-        pagingEnabled
-        ref={flatListRef}
-        style={{ height: heightContent }}
-        showsHorizontalScrollIndicator={false}
-        data={publications}
-        onViewableItemsChanged={onViewableItemsChanged}
-        renderItem={renderPublicationItem}
-        keyExtractor={(_, index) => index.toString()}
-        onScrollToIndexFailed={onScrollToStatusFail}
-        onScrollBeginDrag={() => {
-          setIsScrolling(true);
-          if (scrollTimeout.current) {
-            clearTimeout(scrollTimeout.current);
-          }
-        }}
-        onScrollEndDrag={() => {
-          scrollTimeout.current = setTimeout(() => {
-            setIsScrolling(false);
-          }, 300);
-        }}
-        onMomentumScrollBegin={() => {
-          setIsScrolling(true);
-          if (scrollTimeout.current) {
-            clearTimeout(scrollTimeout.current);
-          }
-        }}
-        onMomentumScrollEnd={() => {
-          scrollTimeout.current = setTimeout(() => {
-            setIsScrolling(false);
-          }, 300);
-        }}
-      />
-      <PageList
-        publications={publications}
-        activeIndex={activeIndex}
-        onChooseIndex={(index) => handleScrollToIndex(index)}
-      />
-    </NewspaperScreenLayout>
+      isDownloading={isDownloading}
+    />
   );
 };
 

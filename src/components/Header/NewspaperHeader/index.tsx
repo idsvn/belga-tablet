@@ -48,12 +48,14 @@ const NewspaperHeader = (props: NewspaperHeaderProps) => {
       </View>
       <Text style={styles.titleText}>{title}</Text>
       <View style={styles.menuView}>
-        <CalendarButton
-          onSelectStartAndEnd={onSelectStartAndEnd}
-          singleSelect={true}
-          initStartDate={moment().format(GENERAL_DATE_FORMAT)}
-          initEndDate={moment().format(GENERAL_DATE_FORMAT)}
-        />
+        {onSelectStartAndEnd && (
+          <CalendarButton
+            onSelectStartAndEnd={onSelectStartAndEnd}
+            singleSelect={true}
+            initStartDate={moment().format(GENERAL_DATE_FORMAT)}
+            initEndDate={moment().format(GENERAL_DATE_FORMAT)}
+          />
+        )}
         <TouchableOpacity onPress={() => onShowSideBar?.()}>
           {showSideBar ? (
             <CloseIcon width={30} height={30} />

@@ -9,11 +9,11 @@ const styles = StyleSheet.create({
   },
   toggleButton: {
     position: 'absolute',
-    top: -30,
     left: 30,
+    top: -34,
     backgroundColor: theme.colors.primary,
     paddingHorizontal: 40,
-    height: 30,
+    height: 34,
     alignItems: 'center',
     justifyContent: 'center',
     borderTopRightRadius: 8,
@@ -38,6 +38,15 @@ const styles = StyleSheet.create({
   },
   pageText: {
     color: '#ffffff',
+  },
+  downloadButton: {
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: 40,
+    height: 83,
+    width: 83,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 83 / 2,
   },
 });
 

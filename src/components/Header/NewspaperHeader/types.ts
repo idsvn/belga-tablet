@@ -4,5 +4,5 @@ export interface NewspaperHeaderProps {
   showSideBar?: boolean;
   onPressBack?: () => void;
   onShowSideBar?: () => void;
-  onSelectStartAndEnd: (startDate: string, endDate: string) => void;
+  onSelectStartAndEnd?: (startDate: string, endDate: string) => void;
 }

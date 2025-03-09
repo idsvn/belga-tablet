@@ -18,10 +18,11 @@ import LogoutIcon from 'src/assets/svg/logout-icon.svg';
 
 import Text from 'components/customs/Text';
 import PrimaryLayout from 'components/Layout/PrimaryLayout';
+import DownloadIconSvg from 'components/svg/DownloadIconSvg';
 
 import AccountSettingTab from './components/AccountSettingTab';
 
-import { replace, userSessionManager } from 'App';
+import { navigate, replace, userSessionManager } from 'App';
 
 import { Menu } from './types';
 
@@ -51,6 +52,9 @@ const MoreScreen = () => {
       case 'logout':
         onLogOut();
         break;
+      case 'download':
+        navigate(PATH_SCREEN.DOWNLOAD_SCREEN);
+        break;
 
       default:
         break;
@@ -79,6 +83,11 @@ const MoreScreen = () => {
       type: 'logout',
       label: t('MoreScreen.MyProfile.logoutText'),
       icon: <LogoutIcon />,
+    },
+    {
+      type: 'download',
+      label: t('MoreScreen.MyProfile.downloadText'),
+      icon: <DownloadIconSvg />,
     },
   ];
 

@@ -6,9 +6,14 @@ import FastImage from 'react-native-fast-image';
 import { FlatList } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Entypo';
 
+import { getImageUri, isFileExist } from 'src/utils/fileUtils';
+
 import Text from 'components/customs/Text';
+import DownloadIconSvg from 'components/svg/DownloadIconSvg';
+import DownloadingIconSvg from 'components/svg/DownloadingIconSvg';
 
 import theme from 'src/themes';
+import colors from 'src/themes/colors';
 
 import { PageListProps } from './types';
 
@@ -17,13 +22,39 @@ import styles from './styles';
 const PageList = (props: PageListProps) => {
   const { t } = useTranslation();
 
-  const { publications = [], activeIndex = 0, onChooseIndex } = props;
+  const {
+    publications = [],
+    activeIndex = 0,
+    onChooseIndex,
+    onDownloadPress,
+    isDownloading,
+  } = props;
 
   const flatListRef = useRef<any>();
 
   const [showPageList, setShowPageList] = useState<boolean>(false);
 
   const [listHeight] = useState(new Animated.Value(0));
+
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+
+  useEffect(() => {
+    Promise.all(
+      publications.map(async (item) => {
+        const imageUrl = item?.attachments?.[0]?.references?.[0]?.href;
+
+        if (imageUrl === undefined) {
+          return '';
+        }
+
+        const isExist = await isFileExist(imageUrl);
+
+        return isExist ? getImageUri(imageUrl) : imageUrl;
+      }),
+    ).then((value) => {
+      setImageUrls(value);
+    });
+  }, [publications]);
 
   useEffect(() => {
     handleScrollToIndex(activeIndex);
@@ -52,71 +83,108 @@ const PageList = (props: PageListProps) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.toggleButton}
-        onPress={toggleShowPageList}
-      >
-        <Icon
-          name={`${showPageList ? 'chevron-small-down' : 'chevron-small-up'}`}
-          size={25}
-          color={'#ffffff'}
-        />
-        <Text style={styles.toggleText}>{t('NewspaperScreen.pageText')}</Text>
-      </TouchableOpacity>
-
-      <Animated.View
-        style={[styles.pageList, { height: listHeight, overflow: 'hidden' }]}
-      >
-        <FlatList
-          horizontal
-          pagingEnabled
-          ref={flatListRef}
-          showsHorizontalScrollIndicator={false}
-          data={publications}
-          renderItem={({ item, index }) => (
-            <TouchableOpacity
-              style={[
-                styles.pageItem,
-                { marginRight: index % 2 === 0 ? 10 : 0 },
-              ]}
-              onPress={() => onChooseIndex?.(index)}
-            >
-              <FastImage
-                source={{ uri: item?.attachments?.[0]?.references?.[0]?.href }}
+      {!showPageList && onDownloadPress && (
+        <View
+          style={{
+            alignItems: 'center',
+            backgroundColor: colors.lightGray,
+            paddingTop: 30,
+          }}
+        >
+          <TouchableOpacity
+            disabled={isDownloading}
+            style={styles.downloadButton}
+            onPress={onDownloadPress}
+          >
+            {isDownloading ? (
+              <DownloadingIconSvg color="white" width={42} height={42} />
+            ) : (
+              <DownloadIconSvg color="white" width={42} height={42} />
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
+      <View>
+        <TouchableOpacity
+          style={styles.toggleButton}
+          onPress={toggleShowPageList}
+        >
+          <Icon
+            name={`${showPageList ? 'chevron-small-down' : 'chevron-small-up'}`}
+            size={25}
+            color={'#ffffff'}
+          />
+          <Text style={styles.toggleText}>{t('NewspaperScreen.pageText')}</Text>
+        </TouchableOpacity>
+        <Animated.View
+          style={[styles.pageList, { height: listHeight, overflow: 'hidden' }]}
+        >
+          <TouchableOpacity
+            style={styles.toggleButton}
+            onPress={toggleShowPageList}
+          >
+            <Icon
+              name={`${showPageList ? 'chevron-small-down' : 'chevron-small-up'}`}
+              size={25}
+              color={'#ffffff'}
+            />
+            <Text style={styles.toggleText}>
+              {t('NewspaperScreen.pageText')}
+            </Text>
+          </TouchableOpacity>
+          <FlatList
+            horizontal
+            pagingEnabled
+            ref={flatListRef}
+            showsHorizontalScrollIndicator={false}
+            data={imageUrls}
+            renderItem={({ item, index }) => (
+              <TouchableOpacity
                 style={[
-                  styles.pageImage,
-                  activeIndex === index && {
-                    borderWidth: 1,
-                    borderColor: theme.colors.primary,
-                    width: 120,
-                  },
+                  styles.pageItem,
+                  { marginRight: index % 2 === 0 ? 10 : 0 },
                 ]}
-                resizeMode="stretch"
-              />
-              <Text
-                style={[
-                  styles.pageText,
-                  {
-                    textAlign:
-                      index === 0 || index === publications.length - 1
-                        ? 'center'
-                        : index % 2 === 0
-                          ? 'left'
-                          : 'right',
-                  },
-                ]}
+                onPress={() => onChooseIndex?.(index)}
               >
-                {` ${index + 1} ${
-                  index % 2 !== 0 && index !== publications.length - 1
-                    ? '-'
-                    : ''
-                }`}
-              </Text>
-            </TouchableOpacity>
-          )}
-          keyExtractor={(_, index) => index.toString()}
-        />
-      </Animated.View>
+                <FastImage
+                  source={{
+                    uri: item,
+                  }}
+                  style={[
+                    styles.pageImage,
+                    activeIndex === index && {
+                      borderWidth: 1,
+                      borderColor: theme.colors.primary,
+                      width: 120,
+                    },
+                  ]}
+                  resizeMode="stretch"
+                />
+                <Text
+                  style={[
+                    styles.pageText,
+                    {
+                      textAlign:
+                        index === 0 || index === publications.length - 1
+                          ? 'center'
+                          : index % 2 === 0
+                            ? 'left'
+                            : 'right',
+                    },
+                  ]}
+                >
+                  {` ${index + 1} ${
+                    index % 2 !== 0 && index !== publications.length - 1
+                      ? '-'
+                      : ''
+                  }`}
+                </Text>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(_, index) => index.toString()}
+          />
+        </Animated.View>
+      </View>
     </View>
   );
 };

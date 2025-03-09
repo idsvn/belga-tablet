@@ -5,6 +5,7 @@ import { persistReducer, persistStore } from 'redux-persist';
 import {
   authenticationReducer,
   deliverablesReducer,
+  downloadReducer,
   exploreReducer,
   newsObjectReducer,
   systemReducer,
@@ -20,12 +21,18 @@ const appReducer = combineReducers({
   systemStore: systemReducer,
   tagStore: tagReducer,
   exploreStore: exploreReducer,
+  downloadStore: downloadReducer,
 });
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['userStore', 'authenticationStore', 'systemStore'],
+  whitelist: [
+    'userStore',
+    'authenticationStore',
+    'systemStore',
+    'downloadStore',
+  ],
 };
 
 const rootReducer: Reducer = (state: RootState | undefined, action: any) => {

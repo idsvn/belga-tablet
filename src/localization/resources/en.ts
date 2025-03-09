@@ -94,6 +94,7 @@ const localizationString = {
           paginationSettingsText: 'Pagination settings',
           languageSettingsText: 'Language settings',
         },
+        downloadText: 'Downloads',
       },
     },
     ShareScreen: {

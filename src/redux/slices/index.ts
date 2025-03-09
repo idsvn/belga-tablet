@@ -1,5 +1,6 @@
 import authenticationReducer from './authenticationSlice';
 import deliverablesReducer from './deliverablesSlice';
+import downloadReducer from './downloadSlice';
 import exploreReducer from './exploreSlice';
 import newsObjectReducer from './newsObjectSlice';
 import systemReducer from './systemSlice';
@@ -14,4 +15,5 @@ export {
   systemReducer,
   tagReducer,
   exploreReducer,
+  downloadReducer,
 };

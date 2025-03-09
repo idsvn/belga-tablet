@@ -3,8 +3,10 @@ import { useWindowDimensions, View } from 'react-native';
 import moment from 'moment';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import CheckBox from 'components/Checkbox';
 import Text from 'components/customs/Text';
 import ImageWithSkeleton from 'components/ImageWithSkeleton';
+import DownloadedIconSvg from 'components/svg/DownloadedIconSvg';
 
 import theme from 'src/themes';
 
@@ -13,7 +15,16 @@ import { ArticleItemProps } from './types';
 import styles from './styles';
 
 const ArticleItem = (props: ArticleItemProps) => {
-  const { title, imageUrl, publishDate, unread, onPress } = props;
+  const {
+    title,
+    imageUrl,
+    publishDate,
+    unread,
+    onPress,
+    isDownloaded,
+    isChecked,
+    onCheck,
+  } = props;
 
   const { width } = useWindowDimensions();
 
@@ -43,17 +54,34 @@ const ArticleItem = (props: ArticleItemProps) => {
         height={contentWidth * 1.4}
         style={styles.imageView}
       />
-      <View style={styles.titleView}>
-        {unread && <View style={styles.dotView}></View>}
-        <Text style={[styles.titleText, unread && styles.titleUnReadText]}>
-          {title || ''}
-        </Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingRight: 20,
+          gap: 20,
+        }}
+      >
+        {onCheck && (
+          <TouchableOpacity onPress={onCheck} style={{ paddingLeft: 16 }}>
+            <CheckBox size={15} onPress={onCheck} checked={isChecked} />
+          </TouchableOpacity>
+        )}
+        <View style={{ flex: 1 }}>
+          <View style={styles.titleView}>
+            {unread && <View style={styles.dotView}></View>}
+            <Text style={[styles.titleText, unread && styles.titleUnReadText]}>
+              {title || ''}
+            </Text>
+          </View>
+          {publishDate ? (
+            <Text style={styles.dateText}>
+              {showPublishDate(publishDate) || ''}
+            </Text>
+          ) : null}
+        </View>
+        {isDownloaded && <DownloadedIconSvg />}
       </View>
-      {publishDate ? (
-        <Text style={styles.dateText}>
-          {showPublishDate(publishDate) || ''}
-        </Text>
-      ) : null}
     </TouchableOpacity>
   );
 };

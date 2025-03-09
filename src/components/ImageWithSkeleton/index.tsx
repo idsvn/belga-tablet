@@ -1,12 +1,9 @@
 import React, { memo, useMemo, useState } from 'react';
 import { StyleProp, TouchableOpacity, ViewStyle } from 'react-native';
 
-import { useNetInfo } from '@react-native-community/netinfo';
 import FastImage, { ImageStyle } from 'react-native-fast-image';
 import ImageView from 'react-native-image-viewing';
 import Skeleton from 'react-native-skeleton-placeholder';
-
-import defaultImageSource from 'src/assets/images/no-image.png';
 
 import { ImageWithSkeletonProps } from './types';
 
@@ -21,8 +18,6 @@ const ImageWithSkeleton = ({
   resizeMode,
 }: ImageWithSkeletonProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
-
-  const { isConnected } = useNetInfo();
 
   const [visible, setIsVisible] = useState(false);
 
@@ -77,12 +72,12 @@ const ImageWithSkeleton = ({
         onPress={() => isPreview && setIsVisible(true)}
       >
         <FastImage
-          source={isConnected === false ? defaultImageSource : source?.[0]}
+          source={source?.[0]}
           style={imageStyles}
           resizeMode={resizeMode}
           onLoad={() => setIsLoaded(true)}
         />
-        {!isLoaded && isConnected && (
+        {!isLoaded && (
           <Skeleton>
             <Skeleton.Item width={width} height={height} borderRadius={0} />
           </Skeleton>

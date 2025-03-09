@@ -16,13 +16,14 @@ import { AppDispatch } from 'src/redux/store';
 
 import ExploreScreen from 'src/screens/ExploreScreen';
 import FavoritesScreen from 'src/screens/FavoritesScreen';
-import MoreScreen from 'src/screens/MoreScreen';
 
 import ExploreSvg from 'components/svg/ExploreSvg';
 import FavoritesSvg from 'components/svg/FavoritesSvg';
 import MoreSvg from 'components/svg/MoreSvg';
 
 import theme from 'src/themes';
+
+import MoreNavigator from './MoreNavigator';
 
 const Tabs = createBottomTabNavigator();
 
@@ -115,8 +116,8 @@ const BottomNavigator: React.FC = () => {
         }}
       />
       <Tabs.Screen
-        name={PATH_SCREEN.MORE_SCREEN}
-        component={MoreScreen}
+        name={PATH_SCREEN.MORE_NAVIGATOR}
+        component={MoreNavigator}
         options={{
           tabBarLabel: t('BottomNavigation.more'),
           tabBarAllowFontScaling: false,

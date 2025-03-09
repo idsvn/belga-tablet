@@ -63,6 +63,7 @@ const ArticleList = () => {
                 navigate(PATH_SCREEN.NEWSPAPER_SCREEN, {
                   id: item.id,
                   sourceId: item.sourceId,
+                  deliverableModel: item,
                 });
               }}
             />

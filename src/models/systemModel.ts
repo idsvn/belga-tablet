@@ -65,6 +65,7 @@ export interface Attachment {
   id?: number;
   type?: AttachmentType;
   file?: AttachmentFile;
+  date?: string;
   embed?: Embed;
   references?: AttachmentReference[];
 }
