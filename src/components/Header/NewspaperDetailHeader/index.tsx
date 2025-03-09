@@ -14,11 +14,13 @@ import ZoomInFontsizeIcon from 'src/assets/svg/zoom-in-fontsize-icon.svg';
 import ZoomOutFontsizeIcon from 'src/assets/svg/zoom-out-fontsize-icon.svg';
 
 import Text from 'components/customs/Text';
+import DownloadIconSvg from 'components/svg/DownloadIconSvg';
 import FavoritesActiveSvg from 'components/svg/FavoritesActiveSvg';
 
 import { goBack } from 'App';
 
 import theme from 'src/themes';
+import colors from 'src/themes/colors';
 
 import { NewspaperDetailHeaderProps } from './types';
 
@@ -31,6 +33,7 @@ const NewspaperDetailHeader = (props: NewspaperDetailHeaderProps) => {
     onPressBack,
     onPressFavorites,
     onPressShare,
+    onPressDownload,
   } = props;
 
   const dispatch = useDispatch<AppDispatch>();
@@ -47,21 +50,28 @@ const NewspaperDetailHeader = (props: NewspaperDetailHeaderProps) => {
         <Text style={styles.backButtonText}>Back</Text>
       </TouchableOpacity>
       {enableRightContent && (
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 15 }}>
+          {onPressDownload && (
+            <TouchableOpacity onPress={onPressDownload}>
+              <DownloadIconSvg color={colors.gray} width={28} height={28} />
+            </TouchableOpacity>
+          )}
           <TouchableOpacity onPress={() => dispatch(decreaseFontSize())}>
             <ZoomOutFontsizeIcon />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => dispatch(increaseFontSize())}>
             <ZoomInFontsizeIcon />
           </TouchableOpacity>
-          <TouchableOpacity onPress={onPressFavorites}>
-            <FavoritesActiveSvg
-              active={isFavorites}
-              activeColor={theme.colors.gray}
-              width={'27'}
-              height={'27'}
-            />
-          </TouchableOpacity>
+          {onPressFavorites && (
+            <TouchableOpacity onPress={onPressFavorites}>
+              <FavoritesActiveSvg
+                active={isFavorites}
+                activeColor={theme.colors.gray}
+                width={'27'}
+                height={'27'}
+              />
+            </TouchableOpacity>
+          )}
           <TouchableOpacity onPress={onPressShare}>
             <ShareIcon />
           </TouchableOpacity>

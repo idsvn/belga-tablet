@@ -1,47 +1,42 @@
-import { useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { useCallback, useMemo } from 'react';
 
+import { useNetInfo } from '@react-native-community/netinfo';
 import { useTranslation } from 'react-i18next';
+import { showMessage } from 'react-native-flash-message';
 import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { useUpdateTags } from 'src/hooks/useUpdateTags';
 
-import { PATH_SCREEN } from 'src/constants/pathName';
 import { QUERY_KEY } from 'src/constants/queryKey';
 
 import newsObjectService from 'src/services/newsObjectService';
 
+import { DeliverableModel } from 'src/models/publicationModel';
 import { Attachment, AttachmentType } from 'src/models/systemModel';
 
+import { addNewsPaperDetail } from 'src/redux/slices/downloadSlice';
 import { RootState } from 'src/redux/store';
 
-import { DATE_FORMAT_DDMMYYYY, formatDate } from 'src/utils/dateUtils';
+import { fetchImage } from 'src/utils/fileUtils';
 
-import ReportIcon from 'src/assets/svg/report-icon.svg';
-import SentimentIcon from 'src/assets/svg/sentiment-icon.svg';
+import { globalLoading } from 'components/GlobalLoading';
 
-import RefreshControl from 'components/customs/RefreshControl';
-import RenderHTML from 'components/customs/RenderHTML';
-import ScrollView from 'components/customs/ScrollView';
-import Text from 'components/customs/Text';
-import NewspaperDetailHeader from 'components/Header/NewspaperDetailHeader';
-import ImageWithSkeleton from 'components/ImageWithSkeleton';
-import PrimaryLayout from 'components/Layout/PrimaryLayout';
+import NewsPaperdetailContent from './components/NewsPaperdetailContent';
 
-import NewspaperDetailSkeleton from './components/NewspaperDetailSkeleton';
-
-import { getParams, navigate } from 'App';
-
-import styles from './styles';
+import { getParams } from 'App';
 
 const NewspaperDetailScreen = () => {
-  const { t } = useTranslation();
-
   const { id } = getParams();
 
-  const fontSizeDefault = useSelector<RootState, number>(
-    (state) => state.systemStore.fontSize.fontSizeDefault,
+  const dispatch = useDispatch();
+
+  const { isConnected } = useNetInfo();
+
+  const { t } = useTranslation();
+
+  const downloadedNewspaperDetails = useSelector<RootState, DeliverableModel[]>(
+    (state) => state.downloadStore.newsletterDetails,
   );
 
   const {
@@ -59,187 +54,67 @@ const NewspaperDetailScreen = () => {
     id,
   });
 
-  const imagesPage = useMemo(() => {
+  const imageUrls = useMemo(() => {
     const attachments = newspaperDetail?.attachments as Attachment[];
 
-    return attachments?.filter((item) => item.type === AttachmentType.Page);
+    const iconLogo = attachments?.filter(
+      (item) => item.type === AttachmentType.Page,
+    )?.[0]?.references?.[0]?.href;
+
+    return [
+      iconLogo,
+      ...(attachments
+        ?.filter((item) => item.type === AttachmentType.Image)
+        ?.map((image) => {
+          return image?.references?.[0]?.href;
+        }) ?? []),
+    ].filter(Boolean);
   }, [newspaperDetail]);
 
-  const imagesBody = useMemo(() => {
-    const attachments = newspaperDetail?.attachments as Attachment[];
+  const isDownloaded = useMemo(() => {
+    return (
+      downloadedNewspaperDetails?.some((item) => item.uuid === id) ?? false
+    );
+  }, [downloadedNewspaperDetails]);
 
-    return attachments?.filter((item) => item.type === AttachmentType.Image);
-  }, [newspaperDetail]);
+  const onPressDownload = useCallback(async () => {
+    try {
+      if (!isConnected) {
+        showMessage({
+          message: t('noInternetMessage'),
+          type: 'danger',
+        });
 
-  const onPressFavorites = () => {
-    if (!id) return;
-    onUpdateFavorite();
-  };
+        return;
+      }
+
+      globalLoading.show();
+      await Promise.all(imageUrls.map(fetchImage));
+      dispatch(addNewsPaperDetail(newspaperDetail));
+      showMessage({
+        message: t('downloadSuccessMessage'),
+        type: 'success',
+      });
+    } catch (error) {
+      showMessage({
+        message: t('downloadErrorMessage'),
+        type: 'danger',
+      });
+      console.error(error);
+    } finally {
+      globalLoading.hide();
+    }
+  }, [newspaperDetail, imageUrls, isConnected]);
 
   return (
-    <PrimaryLayout
-      Header={
-        <NewspaperDetailHeader
-          isFavorites={isFavorite}
-          onPressFavorites={onPressFavorites}
-          onPressShare={() =>
-            navigate(PATH_SCREEN.SHARE_SCREEN, {
-              id,
-              source: newspaperDetail?.source,
-              title: newspaperDetail?.title,
-            })
-          }
-        />
-      }
-    >
-      {!isLoading ? (
-        <ScrollView
-          style={styles.container}
-          refreshControl={
-            <RefreshControl refreshing={isLoading} onRefresh={refetch} />
-          }
-        >
-          <View style={styles.headerInfo}>
-            <ImageWithSkeleton
-              imageSource={newspaperDetail?.sourceLogo}
-              style={styles.sourceLogo}
-            />
-            <Text style={[styles.titleText, { fontSize: fontSizeDefault + 6 }]}>
-              {newspaperDetail?.subSource || ''}
-            </Text>
-            <Text
-              style={[styles.subSourceText, { fontSize: fontSizeDefault + 6 }]}
-            >
-              {newspaperDetail?.sourceGroup || ''}
-            </Text>
-            {newspaperDetail?.publishDate ? (
-              <Text
-                style={[
-                  styles.publishDateText,
-                  { fontSize: fontSizeDefault + 6 },
-                ]}
-              >
-                {formatDate(
-                  new Date(newspaperDetail.publishDate),
-                  DATE_FORMAT_DDMMYYYY,
-                )}
-              </Text>
-            ) : null}
-          </View>
-          <View style={styles.contentContainer}>
-            {!!imagesPage?.[0]?.references?.[0]?.href && (
-              <ImageWithSkeleton
-                imageSource={imagesPage?.[0]?.references?.[0]?.href}
-                width={170}
-                height={244}
-                style={styles.contentImage}
-              />
-            )}
-            <Text
-              style={[styles.contentTitle, { fontSize: fontSizeDefault + 26 }]}
-            >
-              {newspaperDetail?.title || ''}
-            </Text>
-          </View>
-          <View style={styles.infoBox}>
-            <View style={styles.infoItem}>
-              <Text style={[styles.infoTitle, { fontSize: fontSizeDefault }]}>
-                {t('NewspaperDetailScreen.sentimentText')}
-              </Text>
-              <View style={styles.infoContent}>
-                <SentimentIcon />
-                <Text
-                  style={[
-                    styles.infoContentText,
-                    { fontSize: fontSizeDefault + 2 },
-                  ]}
-                >
-                  Positive
-                </Text>
-              </View>
-            </View>
-            <View style={styles.infoItem}>
-              <Text style={[styles.infoTitle, { fontSize: fontSizeDefault }]}>
-                {t('NewspaperDetailScreen.mediaValueText')}
-              </Text>
-              <View style={styles.infoContent}>
-                <Text
-                  style={[
-                    styles.infoContentText,
-                    { fontSize: fontSizeDefault + 2 },
-                  ]}
-                >{`€${newspaperDetail?.mediaValue?.amount}`}</Text>
-              </View>
-            </View>
-            <View style={styles.infoItem}>
-              <Text style={[styles.infoTitle, { fontSize: fontSizeDefault }]}>
-                {t('NewspaperDetailScreen.audienceReachText')}
-              </Text>
-              <View style={styles.infoContent}>
-                <Text
-                  style={[
-                    styles.infoContentText,
-                    { fontSize: fontSizeDefault + 2 },
-                  ]}
-                >{`${newspaperDetail?.audience || 0}`}</Text>
-              </View>
-            </View>
-            <View style={styles.infoItem}>
-              <Text style={[styles.infoTitle, { fontSize: fontSizeDefault }]}>
-                {t('NewspaperDetailScreen.positioningText')}
-              </Text>
-              <View style={styles.infoContent}>
-                <Text
-                  style={[
-                    styles.infoContentText,
-                    { fontSize: fontSizeDefault + 2 },
-                  ]}
-                >{`${t('NewspaperDetailScreen.pageText')} ${newspaperDetail?.page || 0}, ${newspaperDetail?.wordCount} ${t('NewspaperDetailScreen.wordsText')}`}</Text>
-              </View>
-            </View>
-          </View>
-          <View>
-            {imagesBody?.map((image, index) => {
-              if (image?.references?.[0]?.href) {
-                return (
-                  <ImageWithSkeleton
-                    key={index}
-                    imageSource={image?.references?.[0]?.href}
-                    height={503}
-                    style={styles.imageBodyView}
-                    imageStyle={styles.imageBodyStyle}
-                  />
-                );
-              }
-            })}
-            <View style={styles.htmlView}>
-              <RenderHTML
-                value={`<p>${newspaperDetail?.body || ''}</p>`}
-                fontSize={fontSizeDefault}
-              />
-            </View>
-          </View>
-          <View style={styles.issueView}>
-            <Text style={[styles.issueText, { fontSize: fontSizeDefault }]}>
-              {t('NewspaperDetailScreen.noticedIssueText')}
-            </Text>
-            <TouchableOpacity
-              style={styles.issueButton}
-              onPress={() => navigate(PATH_SCREEN.REPORT_ISSUE_SCREEN, { id })}
-            >
-              <ReportIcon />
-              <Text
-                style={[styles.issueTextButton, { fontSize: fontSizeDefault }]}
-              >
-                {t('NewspaperDetailScreen.reportIssueText')}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      ) : (
-        <NewspaperDetailSkeleton />
-      )}
-    </PrimaryLayout>
+    <NewsPaperdetailContent
+      newspaperDetail={newspaperDetail}
+      isFavorite={isFavorite}
+      onUpdateFavorite={onUpdateFavorite}
+      isLoading={isLoading}
+      refetch={refetch}
+      onPressDownload={isDownloaded ? undefined : onPressDownload}
+    />
   );
 };
 

@@ -49,6 +49,7 @@ const BelgaItem = ({ data }: BelgaItemProps) => {
   return (
     <TouchableOpacity
       onPress={() => {
+        console.log(data);
         navigate(PATH_SCREEN.NEWSPAPER_DETAIL_SCREEN, {
           id: data.uuid,
         });

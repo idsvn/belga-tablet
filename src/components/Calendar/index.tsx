@@ -156,24 +156,31 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
     endDate,
     label,
   }) => {
-    if (startDate) {
-      setStartDate(startDate.dateString);
+    if (!startDate || !endDate) {
+      return;
     }
 
-    if (endDate) {
-      setEndDate(endDate.dateString);
-    }
+    const newStartDate = startDate.dateString;
+
+    const newEndDate = endDate.dateString;
+
+    setDisplayStartDate(newStartDate);
+    setDisplayEndDate(newEndDate);
+
+    setStartDate(newStartDate);
+    setEndDate(newEndDate);
 
     setSelectedQuickTap(label);
-    if (
-      startDate &&
-      endDate &&
-      (startDate.dateString !== initialStartDate ||
-        endDate.dateString !== initialEndDate)
-    ) {
+
+    const hasDateChanged =
+      newStartDate !== initialStartDate || newEndDate !== initialEndDate;
+
+    const hasLabelChanged = label !== selectedQuickTap;
+
+    if (hasDateChanged || hasLabelChanged) {
       onDatesChange?.({
-        startDate: displayStartDate,
-        endDate: displayEndDate,
+        startDate: newStartDate,
+        endDate: newEndDate,
         label: t(label),
       });
     }

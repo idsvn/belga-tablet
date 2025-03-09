@@ -9,6 +9,7 @@ import { PATH_SCREEN } from 'src/constants/pathName';
 
 import DownloadScreen from 'src/screens/DownloadScreen';
 import MoreScreen from 'src/screens/MoreScreen';
+import OfflineNewspaperDetailScreen from 'src/screens/NewspaperDetailScreen/OfflineNewspaperDetailScreen';
 import OfflineNewspaperScreen from 'src/screens/NewspaperScreen/OfflineNewspaperScreen';
 
 const RootStack = createStackNavigator();
@@ -44,6 +45,12 @@ const MoreNavigator = () => {
       <RootStack.Screen
         name={PATH_SCREEN.OFFLINE_NEWSPAPER_SCREEN}
         component={OfflineNewspaperScreen}
+        options={optionsMain}
+      />
+
+      <RootStack.Screen
+        name={PATH_SCREEN.OFFLINE_NEWSPAPER_DETAIL_SCREEN}
+        component={OfflineNewspaperDetailScreen}
         options={optionsMain}
       />
     </RootStack.Navigator>

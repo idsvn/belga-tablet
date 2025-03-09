@@ -148,7 +148,6 @@ const Publications = ({
           >
             <CheckBox
               size={15}
-              onPress={handleSelectAll}
               checked={
                 selectedPublications.length === downloadedPublications.length
               }

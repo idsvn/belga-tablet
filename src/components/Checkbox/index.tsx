@@ -13,6 +13,7 @@ const CheckBox = (props: CheckBoxProps) => {
 
   return (
     <TouchableOpacity
+      hitSlop={{ top: 10, left: 10, right: 10, bottom: 10 }}
       disabled={!onPress}
       style={[
         styles.checkBoxView,

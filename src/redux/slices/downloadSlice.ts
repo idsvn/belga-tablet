@@ -13,10 +13,12 @@ export interface DownloadedPublicationModel {
 
 interface initialStateType {
   downloadedPublications: DownloadedPublicationModel[];
+  newsletterDetails: DeliverableModel[];
 }
 
 const initialState: initialStateType = {
   downloadedPublications: [],
+  newsletterDetails: [],
 };
 
 const downloadSlice = createSlice({
@@ -33,10 +35,25 @@ const downloadSlice = createSlice({
         (item) => getDeliverableId(item.deliverableModel) !== deliverableId,
       );
     },
+    addNewsPaperDetail: (state, action) => {
+      state.newsletterDetails.push(action.payload);
+    },
+    removeNewsPaperDetail: (state, action) => {
+      const uuid = action.payload;
+
+      state.newsletterDetails = state.newsletterDetails.filter(
+        (item) => item.uuid !== uuid,
+      );
+    },
   },
 });
 
 const { reducer, actions } = downloadSlice;
 
-export const { addPublication, removePublication } = actions;
+export const {
+  addPublication,
+  removePublication,
+  addNewsPaperDetail,
+  removeNewsPaperDetail,
+} = actions;
 export default reducer;

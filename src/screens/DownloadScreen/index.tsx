@@ -135,7 +135,7 @@ const DownloadScreen = () => {
         {activeTab === 'publications' ? (
           <Publications date={date} searchKeyword={searchText} />
         ) : (
-          <Newsletters />
+          <Newsletters date={date} searchKeyword={searchText} />
         )}
       </View>
     </SafeAreaView>

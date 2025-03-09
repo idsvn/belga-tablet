@@ -112,6 +112,9 @@ const localizationString = {
       notes: 'NOTES',
       send: 'SEND',
     },
+    noInternetMessage: 'No internet connection',
+    downloadSuccessMessage: 'Download success',
+    downloadErrorMessage: 'Download error',
   },
 };
 

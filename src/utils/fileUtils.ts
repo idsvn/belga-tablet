@@ -42,6 +42,11 @@ export const fetchImage = async (imageUrl?: string) => {
     }).promise;
   }
 
+  console.log(
+    `Successfully download file: ${localImageUri}`,
+    await isFileExist(imageUrl),
+  );
+
   return localImageUri;
 };
 
