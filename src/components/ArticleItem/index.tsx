@@ -64,7 +64,7 @@ const ArticleItem = (props: ArticleItemProps) => {
       >
         {onCheck && (
           <TouchableOpacity onPress={onCheck} style={{ paddingLeft: 16 }}>
-            <CheckBox size={15} onPress={onCheck} checked={isChecked} />
+            <CheckBox size={15} checked={isChecked} />
           </TouchableOpacity>
         )}
         <View style={{ flex: 1 }}>

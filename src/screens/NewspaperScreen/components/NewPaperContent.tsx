@@ -1,6 +1,5 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import {
-  FlatList,
   PanResponder,
   Platform,
   TouchableOpacity,
@@ -11,6 +10,7 @@ import {
 import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
 import { useTranslation } from 'react-i18next';
 import FastImage from 'react-native-fast-image';
+import { FlatList } from 'react-native-gesture-handler';
 
 import { PATH_SCREEN } from 'src/constants/pathName';
 

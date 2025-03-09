@@ -64,6 +64,7 @@ export interface DeliverableModel {
   type?: ContentType;
   country?: Country;
   id: number;
+  deliverableId: number;
   language?: string;
   mediumType?: MediumType;
   publishDate?: string;

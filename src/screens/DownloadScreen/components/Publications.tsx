@@ -10,6 +10,7 @@ import { PATH_SCREEN } from 'src/constants/pathName';
 
 import {
   DownloadedPublicationModel,
+  getDeliverableId,
   removePublication,
 } from 'src/redux/slices/downloadSlice';
 import { RootState } from 'src/redux/store';
@@ -47,7 +48,9 @@ const Publications = () => {
         return [];
       }
 
-      return downloadedPublications.map((it) => it.deliverableModel.id);
+      return downloadedPublications.map((it) =>
+        getDeliverableId(it.deliverableModel),
+      );
     });
   }, [downloadedPublications]);
 
@@ -60,21 +63,24 @@ const Publications = () => {
       ) ?? [];
 
     await Promise.all(imageUrls.map(deleteFile));
-
-    dispatch(removePublication(downloadedPublication.deliverableModel.id));
+    dispatch(
+      removePublication(
+        getDeliverableId(downloadedPublication.deliverableModel),
+      ),
+    );
   };
 
   const handleDelete = useCallback(async () => {
     const deletePublications = downloadedPublications.filter((it) =>
-      selectedPublications.includes(it.deliverableModel.id),
+      selectedPublications.includes(getDeliverableId(it.deliverableModel)),
     );
 
     try {
       globalLoading.show();
 
       await Promise.all(deletePublications.map(deletePublication));
-      const deletedPublicationIds = deletePublications.map(
-        (it) => it.deliverableModel.id,
+      const deletedPublicationIds = deletePublications.map((it) =>
+        getDeliverableId(it.deliverableModel),
       );
 
       setSelectedPublications((prev) =>
@@ -87,17 +93,19 @@ const Publications = () => {
       });
     } finally {
       showMessage({
-        message: 'Downloaded successfully',
+        message: 'Delete successfully',
         type: 'success',
       });
       globalLoading.hide();
     }
   }, [downloadedPublications, selectedPublications]);
 
+  console.log(selectedPublications);
+
   return (
     <View style={{ flex: 1, width: '100%' }}>
-      <ScrollView>
-        {selectedPublications.length > 0 && (
+      <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+        {downloadedPublications.length > 0 && (
           <TouchableOpacity
             style={styles.checkboxView}
             onPress={handleSelectAll}
@@ -127,7 +135,7 @@ const Publications = () => {
               data?.attachments?.[0]?.references?.[0]?.href ?? '',
             );
 
-            const id = item.deliverableModel.id;
+            const id = getDeliverableId(item.deliverableModel);
 
             const publishDate = data.publishDate ?? data.attachments?.[0].date;
 
@@ -140,7 +148,7 @@ const Publications = () => {
                 unread={true}
                 onPress={() => {
                   navigate(PATH_SCREEN.OFFLINE_NEWSPAPER_SCREEN, {
-                    id: data.id,
+                    id: id,
                     sourceId: data.sourceId,
                     deliverableModel: data,
                   });

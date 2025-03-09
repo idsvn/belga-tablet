@@ -2,6 +2,10 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { DeliverableModel } from 'src/models/publicationModel';
 
+export const getDeliverableId = (deliverable?: DeliverableModel) => {
+  return deliverable?.id || deliverable?.deliverableId || 0;
+};
+
 export interface DownloadedPublicationModel {
   deliverableModel: DeliverableModel;
   publication: DeliverableModel[];
@@ -26,7 +30,7 @@ const downloadSlice = createSlice({
       const deliverableId = action.payload;
 
       state.downloadedPublications = state.downloadedPublications.filter(
-        (item) => item.deliverableModel.id !== deliverableId,
+        (item) => getDeliverableId(item.deliverableModel) !== deliverableId,
       );
     },
   },

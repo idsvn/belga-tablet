@@ -2,7 +2,10 @@ import React, { useMemo } from 'react';
 
 import { useSelector } from 'react-redux';
 
-import { DownloadedPublicationModel } from 'src/redux/slices/downloadSlice';
+import {
+  DownloadedPublicationModel,
+  getDeliverableId,
+} from 'src/redux/slices/downloadSlice';
 import { RootState } from 'src/redux/store';
 
 import { NewsPaperContent } from './components/NewPaperContent';
@@ -19,7 +22,7 @@ const OfflineNewspaperScreen = () => {
 
   const offlinePublications = useMemo(() => {
     return downloadedPublications.find(
-      (item) => item.deliverableModel.id === id,
+      (item) => getDeliverableId(item.deliverableModel) === id,
     )?.publication;
   }, [downloadedPublications, id]);
 
