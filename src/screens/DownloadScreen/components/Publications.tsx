@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { t } from 'i18next';
@@ -30,7 +30,13 @@ import colors from 'src/themes/colors';
 
 import styles from '../styles';
 
-const Publications = () => {
+const Publications = ({
+  date,
+  searchKeyword,
+}: {
+  date: { start: string; end: string };
+  searchKeyword?: string;
+}) => {
   const downloadedPublications = useSelector<
     RootState,
     DownloadedPublicationModel[]
@@ -41,6 +47,11 @@ const Publications = () => {
   const [selectedPublications, setSelectedPublications] = useState<number[]>(
     [],
   );
+
+  // New state for filtered publications
+  const [filteredPublications, setFilteredPublications] = useState<
+    DownloadedPublicationModel[]
+  >([]);
 
   const handleSelectAll = useCallback(() => {
     setSelectedPublications((prev) => {
@@ -100,7 +111,32 @@ const Publications = () => {
     }
   }, [downloadedPublications, selectedPublications]);
 
-  console.log(selectedPublications);
+  useEffect(() => {
+    const startDate = new Date(date.start);
+
+    const endDate = new Date(date.end);
+
+    const filtered = downloadedPublications.filter((item) => {
+      const data = item.deliverableModel;
+
+      const publishDate = new Date(
+        data.publishDate ?? data.attachments?.[0]?.date ?? '',
+      );
+
+      const title = data.source ?? data.subSource;
+
+      return (
+        publishDate >= startDate &&
+        publishDate <= endDate &&
+        (!searchKeyword ||
+          title
+            ?.toLocaleLowerCase()
+            .includes(searchKeyword.toLocaleLowerCase()))
+      );
+    });
+
+    setFilteredPublications(filtered);
+  }, [downloadedPublications, date, searchKeyword]);
 
   return (
     <View style={{ flex: 1, width: '100%' }}>
@@ -128,14 +164,14 @@ const Publications = () => {
             flexWrap: 'wrap',
           }}
         >
-          {downloadedPublications?.map((item, index) => {
+          {filteredPublications?.map((item, index) => {
             const data = item.deliverableModel;
 
             const imageUrl = getImageUri(
               data?.attachments?.[0]?.references?.[0]?.href ?? '',
             );
 
-            const id = getDeliverableId(item.deliverableModel);
+            const id = getDeliverableId(data);
 
             const publishDate = data.publishDate ?? data.attachments?.[0].date;
 

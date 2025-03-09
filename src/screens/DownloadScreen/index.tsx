@@ -40,12 +40,12 @@ const DownloadScreen = () => {
 
     const today = new Date();
 
-    const dayAgo = new Date();
+    const sevenDayAgo = new Date();
 
-    dayAgo.setDate(today.getDate() - 1);
+    sevenDayAgo.setDate(today.getDate() - 7);
 
     return {
-      start: formatDate(dayAgo),
+      start: formatDate(sevenDayAgo),
       end: formatDate(today),
     };
   });
@@ -91,7 +91,7 @@ const DownloadScreen = () => {
           initStartDate={start}
           initEndDate={end}
           onSelectStartAndEnd={onSelectStartAndEnd}
-          defaultLabel={t('ExploreScreen.last24Hours')}
+          defaultLabel={t('Calendar.last7DaysText')}
         />
       </View>
 
@@ -132,7 +132,11 @@ const DownloadScreen = () => {
       </View>
 
       <View style={styles.contentContainer}>
-        {activeTab === 'publications' ? <Publications /> : <Newsletters />}
+        {activeTab === 'publications' ? (
+          <Publications date={date} searchKeyword={searchText} />
+        ) : (
+          <Newsletters />
+        )}
       </View>
     </SafeAreaView>
   );
