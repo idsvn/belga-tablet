@@ -77,6 +77,10 @@ const NewspaperDetailScreen = () => {
     );
   }, [downloadedNewspaperDetails]);
 
+  const offlineNewspaperDetail = useMemo(() => {
+    return downloadedNewspaperDetails?.find((item) => item.uuid === id);
+  }, [downloadedNewspaperDetails]);
+
   const onPressDownload = useCallback(async () => {
     try {
       if (!isConnected) {
@@ -108,10 +112,10 @@ const NewspaperDetailScreen = () => {
 
   return (
     <NewsPaperdetailContent
-      newspaperDetail={newspaperDetail}
+      newspaperDetail={isConnected ? newspaperDetail : offlineNewspaperDetail}
       isFavorite={isFavorite}
       onUpdateFavorite={onUpdateFavorite}
-      isLoading={isLoading}
+      isLoading={isLoading && (!!isConnected || !offlineNewspaperDetail)}
       refetch={refetch}
       onPressDownload={isDownloaded ? undefined : onPressDownload}
     />

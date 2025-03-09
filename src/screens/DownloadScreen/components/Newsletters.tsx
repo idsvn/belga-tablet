@@ -130,6 +130,13 @@ const Newsletters = ({
               newspaperDetail: item,
             });
           }}
+          onPressShare={() => {
+            navigate(PATH_SCREEN.SHARE_SCREEN, {
+              id,
+              source: item.source,
+              title: title,
+            });
+          }}
           checked={selectedNewspapers.includes(item.uuid)}
           onPressCheckBox={() => {
             setSelectedNewspapers((prev) => {

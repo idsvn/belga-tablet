@@ -110,7 +110,7 @@ const NewsPaperdetailContent = ({
       Header={
         <NewspaperDetailHeader
           isFavorites={isFavorite}
-          onPressFavorites={onPressFavorites}
+          onPressFavorites={onUpdateFavorite ? onPressFavorites : undefined}
           onPressShare={() =>
             navigate(PATH_SCREEN.SHARE_SCREEN, {
               id,

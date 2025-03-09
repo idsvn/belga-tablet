@@ -93,7 +93,7 @@ const NewspaperScreen = () => {
   >((state) => state.downloadStore.downloadedPublications);
 
   const isDownloaded = useMemo(() => {
-    if (!currentDeliverableModel) return false;
+    if (!currentDeliverableModel) return undefined;
     const currentId = getDeliverableId(currentDeliverableModel);
 
     return downloadedPublications.some((item) => {
@@ -173,10 +173,24 @@ const NewspaperScreen = () => {
     setDate(start);
   }, []);
 
+  const offlinePublications = useMemo(() => {
+    if (isConnected) {
+      return undefined;
+    }
+
+    return (
+      downloadedPublications.find((item) => {
+        const downloadedId = getDeliverableId(item.deliverableModel);
+
+        return downloadedId !== undefined && downloadedId === id;
+      })?.publication ?? []
+    );
+  }, [downloadedPublications, currentDeliverableModel, isConnected]);
+
   return (
     <NewsPaperContent
-      publications={publications}
-      onPressDownload={isDownloaded ? undefined : onPressDownload}
+      publications={isConnected ? publications : offlinePublications}
+      onPressDownload={isDownloaded === false ? onPressDownload : undefined}
       onSelectStartAndEnd={onSelectStartAndEnd}
       isDownloading={isDownloading}
     />
